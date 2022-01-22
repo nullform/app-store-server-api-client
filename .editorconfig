@@ -1,0 +1,15 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = LF
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{yml,yaml,php,html,twig,js,xml,xml.dist,json}]
+indent_style = space
+indent_size = 4
+
+[{Makefile,Dockerfile}]
+indent_style = tab
+indent_size = 4
