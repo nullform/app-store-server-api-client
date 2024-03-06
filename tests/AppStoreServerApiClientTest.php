@@ -129,6 +129,13 @@ class AppStoreServerApiClientTest extends AbstractTestCase
         }
     }
 
+    public function testRequestATestNotification()
+    {
+        $response = $this->getClient()->requestATestNotification();
+
+        $this->assertNotEmpty($response->testNotificationToken);
+    }
+
     public function testCallApi()
     {
         $client = $this->getClient();

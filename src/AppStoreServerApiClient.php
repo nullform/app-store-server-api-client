@@ -18,6 +18,7 @@ use Nullform\AppStoreServerApiClient\Models\Responses\ExtendRenewalDateResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\HistoryResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\OrderLookupResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\RefundHistoryResponse;
+use Nullform\AppStoreServerApiClient\Models\Responses\SendTestNotificationResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\StatusResponse;
 use Nullform\HttpStatus;
 use Psr\Http\Message\ResponseInterface;
@@ -317,6 +318,22 @@ class AppStoreServerApiClient
         $contents = $response->getBody()->getContents();
 
         return new ExtendRenewalDateResponse($contents);
+    }
+
+    /**
+     * Ask App Store Server Notifications to send a test notification to your server.
+     *
+     * @return SendTestNotificationResponse
+     * @throws AppleException
+     * @throws HttpClientException
+     * @link https://developer.apple.com/documentation/appstoreserverapi/request_a_test_notification
+     */
+    public function requestATestNotification(): SendTestNotificationResponse
+    {
+        $response = $this->callApi("POST", "inApps/v1/notifications/test");
+        $contents = $response->getBody()->getContents();
+
+        return new SendTestNotificationResponse($contents);
     }
 
     /**
