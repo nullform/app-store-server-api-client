@@ -31,7 +31,7 @@ class StatusResponse extends AbstractModel
     /**
      * Your app’s App Store identifier.
      *
-     * @var int
+     * @var int|null
      * @link https://developer.apple.com/documentation/appstoreserverapi/appappleid
      */
     public $appAppleId;

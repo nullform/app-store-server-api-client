@@ -39,6 +39,11 @@ class JWSTransactionDecodedPayload extends AbstractModel
      * A string that describes whether the transaction was purchased by the user, or is available to them through
      * Family Sharing.
      *
+     * Possible values:
+     *
+     * - FAMILY_SHARED - The transaction belongs to a family member who benefits from service.
+     * - PURCHASED - The transaction belongs to the purchaser.
+     *
      * @var string
      * @link https://developer.apple.com/documentation/appstoreserverapi/inappownershiptype
      */

@@ -18,7 +18,7 @@ class HistoryResponse extends AbstractModel
     /**
      * The unique identifier of an app in the App Store.
      *
-     * @var int
+     * @var int|null
      * @link https://developer.apple.com/documentation/appstoreserverapi/appappleid
      */
     public $appAppleId;

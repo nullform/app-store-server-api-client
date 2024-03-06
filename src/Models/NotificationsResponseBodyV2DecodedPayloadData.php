@@ -15,7 +15,7 @@ class NotificationsResponseBodyV2DecodedPayloadData extends AbstractModel
     /**
      * The unique identifier of an app in the App Store.
      *
-     * @var int
+     * @var int|null
      * @link https://developer.apple.com/documentation/appstoreservernotifications/appappleid
      */
     public $appAppleId;
