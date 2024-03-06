@@ -1,14 +1,16 @@
-# App Store Server API Client
+# Apple App Store Server API PHP client
 
-Unoffical **PHP** client for [App Store Server API](https://developer.apple.com/documentation/appstoreserverapi).
-
-## Requirements
-
-- PHP >= 7.2
+Unoffical PHP client for [App Store Server API](https://developer.apple.com/documentation/appstoreserverapi).
 
 ## Installation
 
-```
+### Requirements
+
+- PHP >= 7.2
+
+### Composer
+
+```shell
 composer require nullform/app-store-server-api-client
 ```
 
