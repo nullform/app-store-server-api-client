@@ -14,6 +14,7 @@ use Nullform\AppStoreServerApiClient\Models\Params\GetRefundHistoryParams;
 use Nullform\AppStoreServerApiClient\Models\Params\GetTransactionHistoryParams;
 use Nullform\AppStoreServerApiClient\Models\Requests\ConsumptionRequest;
 use Nullform\AppStoreServerApiClient\Models\Requests\ExtendRenewalDateRequest;
+use Nullform\AppStoreServerApiClient\Models\Responses\CheckTestNotificationResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\ExtendRenewalDateResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\HistoryResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\OrderLookupResponse;
@@ -334,6 +335,23 @@ class AppStoreServerApiClient
         $contents = $response->getBody()->getContents();
 
         return new SendTestNotificationResponse($contents);
+    }
+
+    /**
+     * Check the status of the test App Store server notification sent to your server.
+     *
+     * @param string $testNotificationToken
+     * @return CheckTestNotificationResponse
+     * @throws AppleException
+     * @throws HttpClientException
+     * @link https://developer.apple.com/documentation/appstoreserverapi/get_test_notification_status
+     */
+    public function getTestNotificationStatus(string $testNotificationToken): CheckTestNotificationResponse
+    {
+        $response = $this->callApi("GET", "inApps/v1/notifications/test/{$testNotificationToken}");
+        $contents = $response->getBody()->getContents();
+
+        return new CheckTestNotificationResponse($contents);
     }
 
     /**

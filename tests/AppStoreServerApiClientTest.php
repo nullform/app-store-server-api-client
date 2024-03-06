@@ -6,6 +6,8 @@ use Nullform\AppStoreServerApiClient\Exceptions\AppleException;
 use Nullform\AppStoreServerApiClient\Models\JWSRenewalInfoDecodedPayload;
 use Nullform\AppStoreServerApiClient\Models\JWSTransactionDecodedPayload;
 use Nullform\AppStoreServerApiClient\Models\LastTransactionsItem;
+use Nullform\AppStoreServerApiClient\Models\NotificationsResponseBodyV2DecodedPayload;
+use Nullform\AppStoreServerApiClient\Models\NotificationsResponseBodyV2DecodedPayloadData;
 use Nullform\AppStoreServerApiClient\Models\Params\GetTransactionHistoryParams;
 use Nullform\AppStoreServerApiClient\Models\Requests\ExtendRenewalDateRequest;
 use Nullform\AppStoreServerApiClient\Models\Responses\HistoryResponse;
@@ -134,6 +136,23 @@ class AppStoreServerApiClientTest extends AbstractTestCase
         $response = $this->getClient()->requestATestNotification();
 
         $this->assertNotEmpty($response->testNotificationToken);
+
+        \sleep(3);
+
+        $response = $this->getClient()->getTestNotificationStatus($response->testNotificationToken);
+
+        $this->assertIsArray($response->sendAttempts);
+        $this->assertNotEmpty($response->signedPayload);
+
+        $attempts = $response->sendAttempts;
+        $decodedPayload = $response->getDecodedPayload();
+
+        if ($attempts) {
+            $attempt = $attempts[0];
+            $this->assertIsIntNotEmpty($attempt->attemptDate);
+            $this->assertIsStringNotEmpty($attempt->sendAttemptResult);
+        }
+
     }
 
     public function testCallApi()
@@ -218,5 +237,31 @@ class AppStoreServerApiClientTest extends AbstractTestCase
         $this->assertIsIntNotEmpty($info->recentSubscriptionStartDate, 'Bad recentSubscriptionStartDate');
         $this->assertIsIntNotEmpty($info->renewalDate, 'Bad renewalDate');
         $this->assertIsIntNotEmpty($info->signedDate, 'Bad signedDate');
+    }
+
+    protected function testNotificationsResponseBodyV2DecodedPayload(NotificationsResponseBodyV2DecodedPayload $payload)
+    {
+        $this->assertIsStringNotEmpty($payload->notificationType, 'Bad notificationType');
+        $this->assertIsStringNotEmpty($payload->notificationUUID, 'Bad notificationUUID');
+        $this->assertIsStringNotEmpty($payload->notificationVersion, 'Bad notificationVersion');
+        $this->assertIsStringNotEmpty($payload->subtype, 'Bad subtype');
+        $this->assertIsArray($payload->data, 'Bad data');
+        $this->assertNotEmpty($payload->data, 'Bad data');
+        $this->testNotificationsResponseBodyV2DecodedPayloadData($payload->data);
+    }
+
+    protected function testNotificationsResponseBodyV2DecodedPayloadData(NotificationsResponseBodyV2DecodedPayloadData $data)
+    {
+        $this->assertTrue(\is_null($data->appAppleId) || \is_int($data->appAppleId), 'Bad appAppleId');
+        $this->assertIsStringNotEmpty($data->bundleId, 'Bad bundleId');
+        $this->assertIsStringNotEmpty($data->bundleVersion, 'Bad bundleVersion');
+        $this->assertIsStringNotEmpty($data->environment, 'Bad environment');
+        $this->assertTrue($data->getDecodedRenewalInfo() || $data->getDecodedTransactionInfo(), 'Empty useful data');
+        if ($data->getDecodedTransactionInfo()) {
+            $this->testJWSTransactionDecodedPayload($data->getDecodedTransactionInfo());
+        }
+        if ($data->getDecodedRenewalInfo()) {
+            $this->testJWSRenewalInfoDecodedPayload($data->getDecodedRenewalInfo());
+        }
     }
 }
