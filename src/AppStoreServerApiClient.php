@@ -369,7 +369,7 @@ class AppStoreServerApiClient
      *
      * @param string $method GET, HEAD, POST, PUT, DELETE or PATCH.
      * @param string $path Relative path, eg: inApps/v2/refund/lookup/1234567890
-     * @param AbstractQueryParams|null $params Query parameters as an instance of AbstractQueryParams.
+     * @param AbstractModel|null $params Query parameters as an instance of AbstractModel.
      * @param AbstractModel|null $body HTTP body as an instance of AbstractModel.
      * @return ResponseInterface
      * @throws AppleException
@@ -378,7 +378,7 @@ class AppStoreServerApiClient
     public function callApi(
         string $method,
         string $path,
-        ?AbstractQueryParams $params = null,
+        ?AbstractModel $params = null,
         ?AbstractModel $body = null
     ): ResponseInterface {
         $method = trim($method);
@@ -395,7 +395,7 @@ class AppStoreServerApiClient
         $clientExtraOptions = [];
 
         if (!empty($params)) {
-            $uri .= "?" . $params->toQueryString();
+            $uri .= "?" . $params->toAppleQueryString();
         }
         if ($body) {
             $clientExtraOptions[RequestOptions::JSON] = $body->toJson();

@@ -2,13 +2,13 @@
 
 namespace Nullform\AppStoreServerApiClient\Models\Params;
 
-use Nullform\AppStoreServerApiClient\AbstractQueryParams;
+use Nullform\AppStoreServerApiClient\AbstractModel;
 use Nullform\AppStoreServerApiClient\Models\JWSTransactionDecodedPayload;
 
 /**
  * @link https://developer.apple.com/documentation/appstoreserverapi/get_transaction_history#query-parameters
  */
-class GetTransactionHistoryParams extends AbstractQueryParams
+class GetTransactionHistoryParams extends AbstractModel
 {
     public const SORT_ASCENDING = 'ASCENDING';
     public const SORT_DESCENDING = 'DESCENDING';

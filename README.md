@@ -66,7 +66,6 @@ You can manually call the App Store Server API via universal **callApi()** metho
 
 ```php
 use Nullform\AppStoreServerApiClient\AppStoreServerApiClient;
-use Nullform\AppStoreServerApiClient\AbstractQueryParams;
 use Nullform\AppStoreServerApiClient\AbstractModel;
 use Nullform\AppStoreServerApiClient\Environment;
 
@@ -74,7 +73,7 @@ $apiKey = new MyApiKey(); // Extends AbstractApiKey
 $bundle = new MyBundle(); // Extends AbstractBundle
 $client = new AppStoreServerApiClient($apiKey, $bundle, Environment::SANDBOX);
 
-$queryParams = new class extends AbstractQueryParams {
+$queryParams = new class extends AbstractModel {
     public $param = 'value';
 };
 $requestBody = new class extends AbstractModel {
@@ -212,7 +211,7 @@ Set new value for HTTP client request timeout (in seconds).
 AppStoreServerApiClient::callApi(
     string $method,
     string $path,
-    ?AbstractQueryParams $params = null,
+    ?AbstractModel $params = null,
     ?AbstractModel $body = null
 ): \Psr\Http\Message\ResponseInterface
 ```
