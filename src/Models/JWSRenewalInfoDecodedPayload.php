@@ -32,6 +32,14 @@ class JWSRenewalInfoDecodedPayload extends AbstractModel
     public $autoRenewStatus;
 
     /**
+     * The server environment, either sandbox or production.
+     *
+     * @var string
+     * @link https://developer.apple.com/documentation/appstoreserverapi/environment
+     */
+    public $environment;
+
+    /**
      * The reason a subscription expired.
      *
      * - 1: The customer canceled their subscription.
@@ -47,7 +55,7 @@ class JWSRenewalInfoDecodedPayload extends AbstractModel
     /**
      * The time when the billing grace period for subscription renewals expires.
      *
-     * @var int
+     * @var int|null
      * @link https://developer.apple.com/documentation/appstoreserverapi/graceperiodexpiresdate
      */
     public $gracePeriodExpiresDate;
@@ -64,7 +72,7 @@ class JWSRenewalInfoDecodedPayload extends AbstractModel
     /**
      * The promo code or the promotional offer identifier.
      *
-     * @var string
+     * @var string|null
      * @link https://developer.apple.com/documentation/appstoreserverapi/offeridentifier
      */
     public $offerIdentifier;
@@ -76,7 +84,7 @@ class JWSRenewalInfoDecodedPayload extends AbstractModel
      * - 2: A promotional offer.
      * - 3: An offer with a subscription offer code.
      *
-     * @var int
+     * @var int|null
      * @link https://developer.apple.com/documentation/appstoreserverapi/offertype
      */
     public $offerType;
@@ -95,7 +103,7 @@ class JWSRenewalInfoDecodedPayload extends AbstractModel
      * - 0: The customer hasn’t yet responded to the subscription price increase.
      * - 1: The customer consented to the subscription price increase.
      *
-     * @var int
+     * @var int|null
      * @link https://developer.apple.com/documentation/appstoreserverapi/priceincreasestatus
      */
     public $priceIncreaseStatus;
@@ -107,6 +115,23 @@ class JWSRenewalInfoDecodedPayload extends AbstractModel
      * @link https://developer.apple.com/documentation/appstoreserverapi/productid
      */
     public $productId;
+
+    /**
+     * The earliest start date of an auto-renewable subscription in a series of subscription purchases that ignores
+     * all lapses of paid service that are 60 days or fewer.
+     *
+     * @var int
+     * @link https://developer.apple.com/documentation/appstoreserverapi/recentsubscriptionstartdate
+     */
+    public $recentSubscriptionStartDate;
+
+    /**
+     * The UNIX time, in milliseconds, that the most recent auto-renewable subscription purchase expires.
+     *
+     * @var int
+     * @link https://developer.apple.com/documentation/appstoreserverapi/renewaldate
+     */
+    public $renewalDate;
 
     /**
      * The UNIX time, in milliseconds, that the App Store signed the JSON Web Signature data.
