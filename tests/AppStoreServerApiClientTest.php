@@ -24,6 +24,16 @@ class AppStoreServerApiClientTest extends AbstractTestCase
         $this->assertNotEmpty($historyResponse->bundleId);
         $this->assertNotEmpty($historyResponse->revision);
         $this->assertIsArray($historyResponse->getDecodedTransactions());
+        $this->assertNotEmpty($historyResponse->getDecodedTransactions());
+
+        $transaction = $historyResponse->getDecodedTransactions()[0];
+
+        $this->assertNotEmpty($transaction);
+        $this->assertInstanceOf(JWSTransactionDecodedPayload::class, $transaction);
+        $this->assertNotEmpty($transaction->appAccountToken);
+        $this->assertNotEmpty($transaction->originalTransactionId);
+        $this->assertNotEmpty($transaction->environment);
+        $this->assertNotEmpty($transaction->type);
 
         $historyResponseWithRevision = $client->getTransactionHistory(
             $this->originalTransactionId,

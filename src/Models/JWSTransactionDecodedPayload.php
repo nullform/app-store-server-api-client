@@ -28,6 +28,24 @@ class JWSTransactionDecodedPayload extends AbstractModel
     public $bundleId;
 
     /**
+     * The three-letter ISO 4217 currency code associated with the price parameter.
+     *
+     * This value is present only if price is present.
+     *
+     * @var string|null
+     * @link https://developer.apple.com/documentation/appstoreserverapi/currency
+     */
+    public $currency = null;
+
+    /**
+     * The server environment, either sandbox or production.
+     *
+     * @var string
+     * @link https://developer.apple.com/documentation/appstoreserverapi/environment
+     */
+    public $environment;
+
+    /**
      * The UNIX time, in milliseconds, a subscription expires or renews.
      *
      * @var int
@@ -56,6 +74,14 @@ class JWSTransactionDecodedPayload extends AbstractModel
      * @link https://developer.apple.com/documentation/appstoreserverapi/isupgraded
      */
     public $isUpgraded;
+
+    /**
+     * The payment mode you configure for the subscription offer, such as Free Trial, Pay As You Go, or Pay Up Front.
+     *
+     * @var string|null
+     * @link https://developer.apple.com/documentation/appstoreserverapi/offerdiscounttype
+     */
+    public $offerDiscountType;
 
     /**
      * The identifier that contains the promo code or the promotional offer identifier.
@@ -92,6 +118,15 @@ class JWSTransactionDecodedPayload extends AbstractModel
      * @link https://developer.apple.com/documentation/appstoreserverapi/originaltransactionid
      */
     public $originalTransactionId;
+
+    /**
+     * An integer value that represents the price multiplied by 1000 of the in-app purchase or subscription offer
+     * you configured in App Store Connect and that the system records at the time of the purchase.
+     *
+     * @var int|null
+     * @link https://developer.apple.com/documentation/appstoreserverapi/price
+     */
+    public $price = null;
 
     /**
      * The unique identifier for the product, that you create in App Store Connect.
@@ -143,6 +178,23 @@ class JWSTransactionDecodedPayload extends AbstractModel
     public $signedDate;
 
     /**
+     * The three-letter code that represents the country or region associated with the App Store storefront
+     * for the purchase.
+     *
+     * @var string
+     * @link https://developer.apple.com/documentation/appstoreserverapi/storefront
+     */
+    public $storefront;
+
+    /**
+     * An Apple-defined value that uniquely identifies the App Store storefront associated with the purchase.
+     *
+     * @var string
+     * @link https://developer.apple.com/documentation/appstoreserverapi/storefrontid
+     */
+    public $storefrontId;
+
+    /**
      * The identifier of the subscription group that the subscription belongs to.
      *
      * @var string
@@ -158,6 +210,18 @@ class JWSTransactionDecodedPayload extends AbstractModel
      * @link https://developer.apple.com/documentation/appstoreserverapi/transactionid
      */
     public $transactionId;
+
+    /**
+     * The reason for the purchase transaction, which indicates whether it’s a customer’s purchase or a renewal
+     * for an auto-renewable subscription that the system initates.
+     *
+     * - PURCHASE
+     * - RENEWAL
+     *
+     * @var string
+     * @link https://developer.apple.com/documentation/appstoreserverapi/transactionreason
+     */
+    public $transactionReason;
 
     /**
      * The type of in-app purchase products you can offer in your app.
