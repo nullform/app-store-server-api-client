@@ -65,7 +65,10 @@ try {
 ### AppStoreServerApiClient::getTransactionHistory
 
 ```php
-AppStoreServerApiClient::getTransactionHistory(string $originalTransactionId, ?string $revision = null): HistoryResponse
+AppStoreServerApiClient::getTransactionHistory(
+    string $transactionId,
+    null|string|GetTransactionHistoryParams $paramsOrRevision = null
+): HistoryResponse
 ```
 
 Get a customer’s in-app purchase transaction history for your app.
@@ -75,7 +78,9 @@ https://developer.apple.com/documentation/appstoreserverapi/get_transaction_hist
 ### AppStoreServerApiClient::getAllTransactionHistory
 
 ```php
-AppStoreServerApiClient::getAllTransactionHistory(string $originalTransactionId): JWSTransactionDecodedPayload[]
+AppStoreServerApiClient::getAllTransactionHistory(
+    string $transactionId
+): JWSTransactionDecodedPayload[]
 ```
 
 Recursively get FULL transaction history.
@@ -83,7 +88,9 @@ Recursively get FULL transaction history.
 ### AppStoreServerApiClient::getAllSubscriptionStatuses
 
 ```php
-AppStoreServerApiClient::getAllSubscriptionStatuses(string $originalTransactionId): StatusResponse
+AppStoreServerApiClient::getAllSubscriptionStatuses(
+    string $transactionId
+): StatusResponse
 ```
 
 Get the statuses for all of a customer’s subscriptions in your app.
@@ -93,7 +100,10 @@ https://developer.apple.com/documentation/appstoreserverapi/get_all_subscription
 ### AppStoreServerApiClient::sendConsumptionInformation
 
 ```php
-AppStoreServerApiClient::sendConsumptionInformation(string $originalTransactionId, ConsumptionRequest $request): void
+AppStoreServerApiClient::sendConsumptionInformation(
+    string $transactionId,
+    ConsumptionRequest $request
+): void
 ```
 
 Send consumption information about a consumable in-app purchase to the App Store after your server receives a consumption request notification.
@@ -103,7 +113,9 @@ https://developer.apple.com/documentation/appstoreserverapi/send_consumption_inf
 ### AppStoreServerApiClient::lookUpOrderId
 
 ```php
-AppStoreServerApiClient::lookUpOrderId(string $orderId): OrderLookupResponse
+AppStoreServerApiClient::lookUpOrderId(
+    string $orderId
+): OrderLookupResponse
 ```
 
 Get a customer’s in-app purchases from a receipt using the order ID.
@@ -113,7 +125,9 @@ https://developer.apple.com/documentation/appstoreserverapi/look_up_order_id
 ### AppStoreServerApiClient::getRefundHistory
 
 ```php
-AppStoreServerApiClient::getRefundHistory(string $originalTransactionId): RefundLookupResponse
+AppStoreServerApiClient::getRefundHistory(
+    string $transactionId
+): RefundLookupResponse
 ```
 
 Get a list of all refunded in-app purchases in your app for a customer.
@@ -136,7 +150,9 @@ https://developer.apple.com/documentation/appstoreserverapi/extend_a_subscriptio
 ### AppStoreServerApiClient::setBundle
 
 ```php
-AppStoreServerApiClient::setBundle(BundleInterface $bundle): self
+AppStoreServerApiClient::setBundle(
+    BundleInterface $bundle
+): self
 ```
 
 Set App Store bundle for authorize your API calls.
@@ -144,7 +160,9 @@ Set App Store bundle for authorize your API calls.
 ### AppStoreServerApiClient::setTokenTtl
 
 ```php
-AppStoreServerApiClient::setTokenTtl(int $ttl): self
+AppStoreServerApiClient::setTokenTtl(
+    int $ttl
+): self
 ```
 
 Set new value for JWT TTL (in seconds). Maximum value: 3600.
@@ -154,7 +172,9 @@ https://developer.apple.com/documentation/appstoreserverapi/generating_tokens_fo
 ### AppStoreServerApiClient::setHttpClientRequestTimeout
 
 ```php
-AppStoreServerApiClient::setHttpClientRequestTimeout(float $timeout): self
+AppStoreServerApiClient::setHttpClientRequestTimeout(
+    float $timeout
+): self
 ```
 
 Set new value for HTTP client request timeout (in seconds).
