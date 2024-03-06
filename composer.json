@@ -5,7 +5,7 @@
 	"keywords": ["apple", "app store", "app store server api", "itunes"],
     "homepage": "https://github.com/nullform/app-store-server-api-client",
     "require": {
-		"php": "^7.2||^8.0",
+        "php": "^7.2||^8.0",
         "ext-json": "*",
         "symfony/uid": "^5.4",
         "guzzlehttp/guzzle": "^7.5",
