@@ -68,4 +68,28 @@ abstract class AbstractTestCase extends TestCase
 
         return $credentials;
     }
+
+    protected function assertIsIntNotEmpty($actual, string $message = '')
+    {
+        $this->assertIsInt($actual, $message);
+        $this->assertNotEmpty($actual, $message);
+    }
+
+    protected function assertIsStringNotEmpty($actual, string $message = '')
+    {
+        $this->assertIsString($actual, $message);
+        $this->assertNotEmpty($actual, $message);
+    }
+
+    protected function assertIsFloatNotEmpty($actual, string $message = '')
+    {
+        $this->assertIsFloat($actual, $message);
+        $this->assertNotEmpty($actual, $message);
+    }
+
+    protected function assertIsArrayNotEmpty($actual, string $message = '')
+    {
+        $this->assertIsArray($actual, $message);
+        $this->assertNotEmpty($actual, $message);
+    }
 }
