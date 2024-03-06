@@ -12,15 +12,26 @@
         "firebase/php-jwt": "^6.0",
         "nullform/http-status": "^1.1"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^8.5"
+    },
     "license": "MIT",
     "autoload": {
         "psr-4": {
             "Nullform\\AppStoreServerApiClient\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Nullform\\AppStoreServerApiClient\\Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Pavel Novikov"
         }
-    ]
+    ],
+    "scripts": {
+        "test": "phpunit"
+    }
 }

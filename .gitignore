@@ -2,3 +2,6 @@
 /composer.lock
 /composer.phar
 /.idea
+/tests/credentials.php
+/tests/private-key.p8
+/.phpunit.result.cache
