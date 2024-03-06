@@ -5,6 +5,7 @@ namespace Nullform\AppStoreServerApiClient;
 use Firebase\JWT\JWT;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\RequestOptions;
 use Nullform\AppStoreServerApiClient\Exceptions\AppleException;
 use Nullform\AppStoreServerApiClient\Exceptions\HttpClientException;
@@ -319,28 +320,17 @@ class AppStoreServerApiClient
     }
 
     /**
-     * Get HTTP Client instance.
+     * Custom call App Store Server API.
      *
-     * @param array $options
-     * @return HttpClient
-     */
-    protected function getHttpClient(array $options = []): HttpClient
-    {
-        return $this->httpClient = new HttpClient(
-            \array_merge([
-                'base_uri'                      => $this->environment->getBaseUrl(),
-                RequestOptions::TIMEOUT         => $this->httpClientRequestTimeout,
-                RequestOptions::ALLOW_REDIRECTS => true,
-                RequestOptions::HTTP_ERRORS     => false,
-                RequestOptions::HEADERS         => [
-                    'Authorization' => "Bearer {$this->getJwt()}"
-                ],
-            ], $options)
-        );
-    }
-
-    /**
-     * Call App Store Server API.
+     * Get transaction history example:
+     * ```
+     * $response = $client->callApi("GET", "inApps/v1/history/$transactionId");
+     * ```
+     *
+     * Request a test notification example:
+     * ```
+     * $response = $client->callApi("POST", "inApps/v1/notifications/test");
+     * ```
      *
      * @param string $method GET, HEAD, POST, PUT, DELETE or PATCH.
      * @param string $path Relative path, eg: inApps/v2/refund/lookup/1234567890
@@ -350,14 +340,20 @@ class AppStoreServerApiClient
      * @throws AppleException
      * @throws HttpClientException
      */
-    protected function callApi(
+    public function callApi(
         string $method,
         string $path,
         ?AbstractQueryParams $params = null,
         ?AbstractModel $body = null
     ): ResponseInterface {
+        $method = trim($method);
+        $path = trim($path);
+        $path = (new Uri($path))->getPath();
         if (!\in_array(\strtolower($method), ['get', 'head', 'post', 'put', 'delete', 'patch'])) {
             throw new HttpClientException('Bad method');
+        }
+        if (!\preg_match('/^inApps\//', $path)) {
+            throw new HttpClientException('Bad path');
         }
 
         $uri = $path;
@@ -382,6 +378,27 @@ class AppStoreServerApiClient
         }
 
         return $response;
+    }
+
+    /**
+     * Get HTTP Client instance.
+     *
+     * @param array $options
+     * @return HttpClient
+     */
+    protected function getHttpClient(array $options = []): HttpClient
+    {
+        return $this->httpClient = new HttpClient(
+            \array_merge([
+                'base_uri'                      => $this->environment->getBaseUrl(),
+                RequestOptions::TIMEOUT         => $this->httpClientRequestTimeout,
+                RequestOptions::ALLOW_REDIRECTS => true,
+                RequestOptions::HTTP_ERRORS     => false,
+                RequestOptions::HEADERS         => [
+                    'Authorization' => "Bearer {$this->getJwt()}"
+                ],
+            ], $options)
+        );
     }
 
     /**

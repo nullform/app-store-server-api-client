@@ -60,6 +60,31 @@ try {
 }
 ```
 
+You can manually call the App Store Server API via universal **callApi()** method:
+
+```php
+use Nullform\AppStoreServerApiClient\AppStoreServerApiClient;
+use Nullform\AppStoreServerApiClient\AbstractQueryParams;
+use Nullform\AppStoreServerApiClient\AbstractModel;
+use Nullform\AppStoreServerApiClient\Environment;
+
+$apiKey = new MyApiKey(); // Extends AbstractApiKey
+$bundle = new MyBundle(); // Extends AbstractBundle
+$client = new AppStoreServerApiClient($apiKey, $bundle, Environment::SANDBOX);
+
+$queryParams = new class extends AbstractQueryParams {
+    public $param = 'value';
+};
+$requestBody = new class extends AbstractModel {
+    public $bodyParam = 'value';
+};
+
+// Get instance of ResponseInterface
+$response = $client->callApi("POST", "inApps/v1/notifications/test", $queryParams, $requestBody);
+// Get response body
+$responseBody = $response->getBody()->getContents();
+```
+
 ## Methods
 
 ### AppStoreServerApiClient::getTransactionHistory
@@ -178,6 +203,19 @@ AppStoreServerApiClient::setHttpClientRequestTimeout(
 ```
 
 Set new value for HTTP client request timeout (in seconds).
+
+### AppStoreServerApiClient::callApi
+
+```php
+AppStoreServerApiClient::callApi(
+    string $method,
+    string $path,
+    ?AbstractQueryParams $params = null,
+    ?AbstractModel $body = null
+): \Psr\Http\Message\ResponseInterface
+```
+
+Custom call App Store Server API with your previously passed credentials.
 
 ## Receiving App Store Server Notifications V2
 

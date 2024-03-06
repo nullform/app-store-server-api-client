@@ -9,6 +9,7 @@ use Nullform\AppStoreServerApiClient\Models\Requests\ExtendRenewalDateRequest;
 use Nullform\AppStoreServerApiClient\Models\Responses\HistoryResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\StatusResponse;
 use Nullform\HttpStatus;
+use Psr\Http\Message\ResponseInterface;
 
 class AppStoreServerApiClientTest extends AbstractTestCase
 {
@@ -89,5 +90,41 @@ class AppStoreServerApiClientTest extends AbstractTestCase
                 $exception->getHttpStatus() == HttpStatus::FORBIDDEN
             ); // The request is invalid and can’t be accepted.
         }
+    }
+
+    public function testCallApi()
+    {
+        $client = $this->getClient();
+
+        $response = $client->callApi("GET", "inApps/v1/history/{$this->originalTransactionId}?revision=test");
+
+        $body = $response->getBody()->getContents();
+
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertNotEmpty($body);
+
+        $model = new HistoryResponse($body);
+
+        $this->assertNotEmpty($model->revision);
+        $this->assertNotEmpty($model->environment);
+        $this->assertNotEmpty($model->getDecodedTransactions());
+
+        $this->expectException(AppleException::class);
+
+        $client->callApi('DELETE', 'inApps/v1/notifications/test');
+    }
+
+    public function testCallApiBadPath()
+    {
+        $this->expectException(\Exception::class);
+
+        $this->getClient()->callApi('GET', '/google');
+    }
+
+    public function testCallApiBadMethod()
+    {
+        $this->expectException(\Exception::class);
+
+        $this->getClient()->callApi('test', 'inApps/v1/notifications/test');
     }
 }
