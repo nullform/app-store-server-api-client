@@ -100,16 +100,13 @@ class AppStoreServerApiClient
     /**
      * @param ApiKeyInterface $apiKey
      * @param BundleInterface $bundle
-     * @param string $environment
-     * @param string $version
+     * @param string $environment sandbox or production
+     * @see Environment::SANDBOX
+     * @see Environment::PRODUCTION
      */
-    public function __construct(
-        ApiKeyInterface $apiKey,
-        BundleInterface $bundle,
-        string $environment,
-        string $version = '1'
-    ) {
-        $this->environment = new Environment($environment, $version);
+    public function __construct(ApiKeyInterface $apiKey, BundleInterface $bundle, string $environment)
+    {
+        $this->environment = new Environment($environment);
         $this->apiKey = $apiKey;
         $this->setBundle($bundle);
     }
@@ -166,7 +163,7 @@ class AppStoreServerApiClient
      */
     public function getTransactionHistory(string $originalTransactionId, ?string $revision = null): HistoryResponse
     {
-        $path = "history/{$originalTransactionId}";
+        $path = "inApps/v1/history/{$originalTransactionId}";
         if ($revision) {
             $path .= "?revision={$revision}";
         }
@@ -216,7 +213,7 @@ class AppStoreServerApiClient
      */
     public function getAllSubscriptionStatuses(string $originalTransactionId): StatusResponse
     {
-        $response = $this->callApi("GET", "subscriptions/{$originalTransactionId}");
+        $response = $this->callApi("GET", "inApps/v1/subscriptions/{$originalTransactionId}");
         $contents = $response->getBody()->getContents();
 
         return new StatusResponse($contents);
@@ -235,7 +232,7 @@ class AppStoreServerApiClient
      */
     public function sendConsumptionInformation(string $originalTransactionId, ConsumptionRequest $request): void
     {
-        $this->callApi("PUT", "transactions/consumption/{$originalTransactionId}", $request);
+        $this->callApi("PUT", "inApps/v1/transactions/consumption/{$originalTransactionId}", $request);
     }
 
     /**
@@ -249,7 +246,7 @@ class AppStoreServerApiClient
      */
     public function lookUpOrderId(string $orderId): OrderLookupResponse
     {
-        $response = $this->callApi("GET", "lookup/{$orderId}");
+        $response = $this->callApi("GET", "inApps/v1/lookup/{$orderId}");
         $contents = $response->getBody()->getContents();
 
         return new OrderLookupResponse($contents);
@@ -266,7 +263,7 @@ class AppStoreServerApiClient
      */
     public function getRefundHistory(string $originalTransactionId): RefundLookupResponse
     {
-        $response = $this->callApi("GET", "refund/lookup/{$originalTransactionId}");
+        $response = $this->callApi("GET", "inApps/v1/refund/lookup/{$originalTransactionId}");
         $contents = $response->getBody()->getContents();
 
         return new RefundLookupResponse($contents);
@@ -286,7 +283,7 @@ class AppStoreServerApiClient
         string $originalTransactionId,
         ExtendRenewalDateRequest $request
     ): ExtendRenewalDateResponse {
-        $response = $this->callApi("PUT", "subscriptions/extend/{$originalTransactionId}", $request);
+        $response = $this->callApi("PUT", "inApps/v1/subscriptions/extend/{$originalTransactionId}", $request);
         $contents = $response->getBody()->getContents();
 
         return new ExtendRenewalDateResponse($contents);
@@ -357,7 +354,10 @@ class AppStoreServerApiClient
             'iss'   => $this->apiKey->getIssuerId(),
             'iat'   => time() - 10,
             'exp'   => time() + $this->tokenTtl - 10,
-            'aud'   => "appstoreconnect-v{$this->environment->getVersion()}",
+            // "v1" regardless of the version in the URI. See "Create the JWT payload" doc.
+            // For example, if we set "aud" as "v2" for request "/inApps/v2/refund/lookup/{transactionId}",
+            // we get 401 Unauthorized.
+            'aud'   => "appstoreconnect-v1",
             'nonce' => Uuid::v4(),
             'bid'   => $this->bundle->getBundleId(),
         ];

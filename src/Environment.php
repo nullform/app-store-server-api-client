@@ -24,19 +24,18 @@ class Environment
 
     /**
      * @var string
+     * @deprecated
      */
     protected $version;
 
     /**
      * @param string $environment
-     * @param string $version
-     * @see SANDBOX
-     * @see PRODUCTION
+     * @see Environment::SANDBOX
+     * @see Environment::PRODUCTION
      */
-    public function __construct(string $environment, string $version = '1')
+    public function __construct(string $environment)
     {
         $this->environment = $environment;
-        $this->version = $version;
     }
 
     /**
@@ -53,6 +52,7 @@ class Environment
 
     /**
      * @return string
+     * @deprecated
      */
     public function getVersion(): string
     {
@@ -60,7 +60,7 @@ class Environment
     }
 
     /**
-     * Get base URL for API endpoints dependent on environment and API version.
+     * Get base URL for API endpoints dependent on environment.
      *
      * @return string
      */
@@ -68,10 +68,10 @@ class Environment
     {
         switch ($this->environment) {
             default:
-                $url = "https://api.storekit.itunes.apple.com/inApps/v{$this->version}/";
+                $url = "https://api.storekit.itunes.apple.com/";
             break;
             case static::SANDBOX:
-                $url = "https://api.storekit-sandbox.itunes.apple.com/inApps/v{$this->version}/";
+                $url = "https://api.storekit-sandbox.itunes.apple.com/";
             break;
         }
         return $url;
