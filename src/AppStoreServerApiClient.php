@@ -9,12 +9,14 @@ use GuzzleHttp\RequestOptions;
 use Nullform\AppStoreServerApiClient\Exceptions\AppleException;
 use Nullform\AppStoreServerApiClient\Exceptions\HttpClientException;
 use Nullform\AppStoreServerApiClient\Models\JWSTransactionDecodedPayload;
+use Nullform\AppStoreServerApiClient\Models\Params\GetRefundHistoryParams;
+use Nullform\AppStoreServerApiClient\Models\Params\GetTransactionHistoryParams;
 use Nullform\AppStoreServerApiClient\Models\Requests\ConsumptionRequest;
 use Nullform\AppStoreServerApiClient\Models\Requests\ExtendRenewalDateRequest;
 use Nullform\AppStoreServerApiClient\Models\Responses\ExtendRenewalDateResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\HistoryResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\OrderLookupResponse;
-use Nullform\AppStoreServerApiClient\Models\Responses\RefundLookupResponse;
+use Nullform\AppStoreServerApiClient\Models\Responses\RefundHistoryResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\StatusResponse;
 use Nullform\HttpStatus;
 use Psr\Http\Message\ResponseInterface;
@@ -154,21 +156,27 @@ class AppStoreServerApiClient
     /**
      * Get a customer’s in-app purchase transaction history for your app.
      *
-     * @param string $originalTransactionId
-     * @param string|null $revision
+     * @param string $transactionId The identifier of a transaction that belongs to the customer,
+     *                              and which may be an original transaction identifier (originalTransactionId).
+     * @param string|GetTransactionHistoryParams|null $paramsOrRevision Query parameters.
+     *                                                                  If you don't need other parameters, you can pass
+     *                                                                  only "revision" here.
      * @return HistoryResponse
      * @throws AppleException
      * @throws HttpClientException
      * @link https://developer.apple.com/documentation/appstoreserverapi/get_transaction_history
      */
-    public function getTransactionHistory(string $originalTransactionId, ?string $revision = null): HistoryResponse
+    public function getTransactionHistory(string $transactionId, $paramsOrRevision = null): HistoryResponse
     {
-        $path = "inApps/v1/history/{$originalTransactionId}";
-        if ($revision) {
-            $path .= "?revision={$revision}";
+        $params = \is_object($paramsOrRevision) && \is_a($paramsOrRevision, GetTransactionHistoryParams::class)
+            ? $paramsOrRevision
+            : new GetTransactionHistoryParams();
+
+        if (!\is_object($paramsOrRevision) && $paramsOrRevision) {
+            $params->revision = (string)$paramsOrRevision;
         }
 
-        $response = $this->callApi("GET", $path);
+        $response = $this->callApi("GET", "inApps/v1/history/{$transactionId}", $params);
         $contents = $response->getBody()->getContents();
 
         return new HistoryResponse($contents);
@@ -177,19 +185,20 @@ class AppStoreServerApiClient
     /**
      * Recursively get FULL transaction history.
      *
-     * @param string $originalTransactionId
+     * @param string $transactionId The identifier of a transaction that belongs to the customer,
+     *                              and which may be an original transaction identifier (originalTransactionId).
      * @return JWSTransactionDecodedPayload[]
      * @throws AppleException
      * @throws HttpClientException
      * @uses AppStoreServerApiClient::getTransactionHistory()
      */
-    public function getAllTransactionHistory(string $originalTransactionId): array
+    public function getAllTransactionHistory(string $transactionId): array
     {
         $revision = null;
         $transactions = [];
 
-        $getTransactions = function () use ($originalTransactionId, &$revision, &$transactions, &$getTransactions) {
-            $response = $this->getTransactionHistory($originalTransactionId, $revision);
+        $getTransactions = function () use ($transactionId, &$revision, &$transactions, &$getTransactions) {
+            $response = $this->getTransactionHistory($transactionId, $revision);
             $revision = $response->revision;
             $transactions = \array_merge($transactions, $response->getDecodedTransactions());
             if ($response->hasMore) {
@@ -205,15 +214,16 @@ class AppStoreServerApiClient
     /**
      * Get the statuses for all of a customer’s subscriptions in your app.
      *
-     * @param string $originalTransactionId
+     * @param string $transactionId The identifier of a transaction that belongs to the customer,
+     *                              and which may be an original transaction identifier (originalTransactionId).
      * @return StatusResponse
      * @throws AppleException
      * @throws HttpClientException
      * @link https://developer.apple.com/documentation/appstoreserverapi/get_all_subscription_statuses
      */
-    public function getAllSubscriptionStatuses(string $originalTransactionId): StatusResponse
+    public function getAllSubscriptionStatuses(string $transactionId): StatusResponse
     {
-        $response = $this->callApi("GET", "inApps/v1/subscriptions/{$originalTransactionId}");
+        $response = $this->callApi("GET", "inApps/v1/subscriptions/{$transactionId}");
         $contents = $response->getBody()->getContents();
 
         return new StatusResponse($contents);
@@ -223,20 +233,25 @@ class AppStoreServerApiClient
      * Send consumption information about a consumable in-app purchase to the App Store after your server receives
      * a consumption request notification.
      *
-     * @param string $originalTransactionId
+     * @param string $transactionId The transaction identifier for which you’re providing consumption information.
+     *                              You receive this identifier in the CONSUMPTION_REQUEST notification
+     *                              the App Store sends to your server’s App Store Server Notifications V2 endpoint.
      * @param ConsumptionRequest $request
      * @return void
      * @throws AppleException
      * @throws HttpClientException
      * @link https://developer.apple.com/documentation/appstoreserverapi/send_consumption_information
+     * @see NotificationV2Types::CONSUMPTION_REQUEST
      */
-    public function sendConsumptionInformation(string $originalTransactionId, ConsumptionRequest $request): void
+    public function sendConsumptionInformation(string $transactionId, ConsumptionRequest $request): void
     {
-        $this->callApi("PUT", "inApps/v1/transactions/consumption/{$originalTransactionId}", $request);
+        $this->callApi("PUT", "inApps/v1/transactions/consumption/{$transactionId}", null, $request);
     }
 
     /**
      * Get a customer’s in-app purchases from a receipt using the order ID.
+     *
+     * Not available in the sandbox environment.
      *
      * @param string $orderId
      * @return OrderLookupResponse
@@ -253,20 +268,34 @@ class AppStoreServerApiClient
     }
 
     /**
-     * Get a list of all refunded in-app purchases in your app for a customer.
+     * Get a paginated list of all of a customer’s refunded in-app purchases for your app.
      *
-     * @param string $originalTransactionId
-     * @return RefundLookupResponse
+     * @param string $transactionId The identifier of a transaction that belongs to the customer,
+     *                              and which may be an original transaction identifier (originalTransactionId).
+     * @param string|GetRefundHistoryParams|null $paramsOrRevision Query parameters.
+     *                                                             If you don't need other parameters, you can pass
+     *                                                             only "revision" here.
+     * @return RefundHistoryResponse
      * @throws AppleException
      * @throws HttpClientException
      * @link https://developer.apple.com/documentation/appstoreserverapi/get_refund_history
      */
-    public function getRefundHistory(string $originalTransactionId): RefundLookupResponse
+    public function getRefundHistory(string $transactionId, $paramsOrRevision = null): RefundHistoryResponse
     {
-        $response = $this->callApi("GET", "inApps/v1/refund/lookup/{$originalTransactionId}");
+        $params = \is_object($paramsOrRevision) && \is_a($paramsOrRevision, GetRefundHistoryParams::class)
+            ? $paramsOrRevision
+            : new GetRefundHistoryParams();
+
+        if (!\is_object($paramsOrRevision) && $paramsOrRevision) {
+            $params->revision = (string)$paramsOrRevision;
+        }
+
+        // V1 is deprecated. Using v2...
+        $response = $this->callApi("GET", "inApps/v2/refund/lookup/{$transactionId}", $params);
+
         $contents = $response->getBody()->getContents();
 
-        return new RefundLookupResponse($contents);
+        return new RefundHistoryResponse($contents);
     }
 
     /**
@@ -283,7 +312,7 @@ class AppStoreServerApiClient
         string $originalTransactionId,
         ExtendRenewalDateRequest $request
     ): ExtendRenewalDateResponse {
-        $response = $this->callApi("PUT", "inApps/v1/subscriptions/extend/{$originalTransactionId}", $request);
+        $response = $this->callApi("PUT", "inApps/v1/subscriptions/extend/{$originalTransactionId}", null, $request);
         $contents = $response->getBody()->getContents();
 
         return new ExtendRenewalDateResponse($contents);
@@ -295,7 +324,7 @@ class AppStoreServerApiClient
      * @param array $options
      * @return HttpClient
      */
-    protected function httpClient(array $options = []): HttpClient
+    protected function getHttpClient(array $options = []): HttpClient
     {
         return $this->httpClient = new HttpClient(
             \array_merge([
@@ -304,7 +333,7 @@ class AppStoreServerApiClient
                 RequestOptions::ALLOW_REDIRECTS => true,
                 RequestOptions::HTTP_ERRORS     => false,
                 RequestOptions::HEADERS         => [
-                    'Authorization' => "Bearer {$this->jwt()}"
+                    'Authorization' => "Bearer {$this->getJwt()}"
                 ],
             ], $options)
         );
@@ -313,23 +342,36 @@ class AppStoreServerApiClient
     /**
      * Call App Store Server API.
      *
-     * @param string $method
-     * @param string $path Relative path.
-     * @param AbstractModel|null $body
+     * @param string $method GET, HEAD, POST, PUT, DELETE or PATCH.
+     * @param string $path Relative path, eg: inApps/v2/refund/lookup/1234567890
+     * @param AbstractQueryParams|null $params Query parameters as an instance of AbstractQueryParams.
+     * @param AbstractModel|null $body HTTP body as an instance of AbstractModel.
      * @return ResponseInterface
-     * @throws HttpClientException
      * @throws AppleException
+     * @throws HttpClientException
      */
-    protected function callApi(string $method, string $path, ?AbstractModel $body = null): ResponseInterface
-    {
+    protected function callApi(
+        string $method,
+        string $path,
+        ?AbstractQueryParams $params = null,
+        ?AbstractModel $body = null
+    ): ResponseInterface {
+        if (!\in_array(\strtolower($method), ['get', 'head', 'post', 'put', 'delete', 'patch'])) {
+            throw new HttpClientException('Bad method');
+        }
+
+        $uri = $path;
         $clientExtraOptions = [];
 
+        if (!empty($params)) {
+            $uri .= "?" . $params->toQueryString();
+        }
         if ($body) {
             $clientExtraOptions[RequestOptions::JSON] = $body->toJson();
         }
 
         try {
-            $response = $this->httpClient($clientExtraOptions)->request($method, $path);
+            $response = $this->getHttpClient($clientExtraOptions)->request($method, $uri);
             $status = $response->getStatusCode();
         } catch (GuzzleException $exception) {
             throw new HttpClientException($exception->getMessage(), $exception->getCode(), $exception);
@@ -348,7 +390,7 @@ class AppStoreServerApiClient
      * @return string
      * @link https://developer.apple.com/documentation/appstoreserverapi/generating_tokens_for_api_requests
      */
-    protected function jwt(): string
+    protected function getJwt(): string
     {
         $payload = [
             'iss'   => $this->apiKey->getIssuerId(),
