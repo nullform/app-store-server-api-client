@@ -55,6 +55,16 @@ abstract class AbstractModel
     }
 
     /**
+     * Object as associative array.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return (array)$this;
+    }
+
+    /**
      * Object as query string.
      *
      * @return string
