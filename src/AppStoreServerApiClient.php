@@ -392,7 +392,7 @@ class AppStoreServerApiClient
      * @throws HttpClientException
      * @link https://developer.apple.com/documentation/appstoreserverapi/request_a_test_notification
      */
-    public function requestATestNotification(): SendTestNotificationResponse
+    public function requestTestNotification(): SendTestNotificationResponse
     {
         $response = $this->callApi("POST", "inApps/v1/notifications/test");
         $contents = $response->getBody()->getContents();
