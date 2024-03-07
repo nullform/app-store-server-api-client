@@ -391,18 +391,17 @@ class AppStoreServerApiClient
             throw new HttpClientException('Bad path');
         }
 
-        $uri = $path;
         $clientExtraOptions = [];
 
         if (!empty($params)) {
-            $uri .= "?" . $params->toAppleQueryString();
+            $clientExtraOptions[RequestOptions::QUERY] = $params->toAppleQueryString();
         }
         if ($body) {
-            $clientExtraOptions[RequestOptions::JSON] = $body->toJson();
+            $clientExtraOptions[RequestOptions::JSON] = $body->toArray();
         }
 
         try {
-            $response = $this->getHttpClient($clientExtraOptions)->request($method, $uri);
+            $response = $this->getHttpClient($clientExtraOptions)->request($method, $path);
             $status = $response->getStatusCode();
         } catch (GuzzleException $exception) {
             throw new HttpClientException($exception->getMessage(), $exception->getCode(), $exception);
