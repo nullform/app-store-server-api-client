@@ -1,8 +1,8 @@
 {
     "name": "nullform/app-store-server-api-client",
-    "description": "PHP client for App Store Server API.",
+    "description": "PHP client for App Store Server API and App Store Server Notifications",
     "type": "library",
-	"keywords": ["apple", "app store", "app store server api", "itunes"],
+	"keywords": ["apple", "app store", "app store server api", "app store server notifications", "itunes"],
     "homepage": "https://github.com/nullform/app-store-server-api-client",
     "require": {
         "php": "^7.2||^8.0",

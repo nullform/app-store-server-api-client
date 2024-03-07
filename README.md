@@ -1,6 +1,6 @@
-# Apple App Store Server API PHP client
+# Apple App Store Server API PHP Client
 
-Unoffical PHP client for [App Store Server API](https://developer.apple.com/documentation/appstoreserverapi).
+Unoffical PHP client for [App Store Server API](https://developer.apple.com/documentation/appstoreserverapi) and [App Store Server Notifications](https://developer.apple.com/documentation/appstoreservernotifications).
 
 ## Installation
 
@@ -306,3 +306,7 @@ try {
 ```
 
 Note that AppStoreServerNotificationsClient only for version 2 notifications.
+
+## Tests
+
+For unit tests you must create *credentials.php* and *private-key.p8* with the key and sandbox credentials from App Store Connect (see *tests/credentials.example.php*).
