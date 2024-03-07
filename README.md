@@ -86,9 +86,9 @@ $response = $client->callApi("POST", "inApps/v1/notifications/test", $queryParam
 $responseBody = $response->getBody()->getContents();
 ```
 
-## Methods
+## AppStoreServerApiClient methods
 
-### AppStoreServerApiClient::getTransactionHistory
+### Get Transaction History
 
 ```php
 AppStoreServerApiClient::getTransactionHistory(
@@ -101,7 +101,7 @@ Get a customer’s in-app purchase transaction history for your app.
 
 https://developer.apple.com/documentation/appstoreserverapi/get_transaction_history
 
-### AppStoreServerApiClient::getAllTransactionHistory
+### Get All Transactions History
 
 ```php
 AppStoreServerApiClient::getAllTransactionHistory(
@@ -111,7 +111,7 @@ AppStoreServerApiClient::getAllTransactionHistory(
 
 Recursively get FULL transaction history.
 
-### AppStoreServerApiClient::getTransactionInfo
+### Get Transaction Info
 
 ```php
 AppStoreServerApiClient::getTransactionInfo(
@@ -123,7 +123,7 @@ Get information about a single transaction for your app.
 
 https://developer.apple.com/documentation/appstoreserverapi/get_transaction_info
 
-### AppStoreServerApiClient::getAllSubscriptionStatuses
+### Get All Subscription Statuses
 
 ```php
 AppStoreServerApiClient::getAllSubscriptionStatuses(
@@ -135,7 +135,7 @@ Get the statuses for all of a customer’s subscriptions in your app.
 
 https://developer.apple.com/documentation/appstoreserverapi/get_all_subscription_statuses
 
-### AppStoreServerApiClient::sendConsumptionInformation
+### Send Consumption Information
 
 ```php
 AppStoreServerApiClient::sendConsumptionInformation(
@@ -148,7 +148,7 @@ Send consumption information about a consumable in-app purchase to the App Store
 
 https://developer.apple.com/documentation/appstoreserverapi/send_consumption_information
 
-### AppStoreServerApiClient::lookUpOrderId
+### Look Up Order Id
 
 ```php
 AppStoreServerApiClient::lookUpOrderId(
@@ -160,7 +160,7 @@ Get a customer’s in-app purchases from a receipt using the order ID.
 
 https://developer.apple.com/documentation/appstoreserverapi/look_up_order_id
 
-### AppStoreServerApiClient::getRefundHistory
+### Get Refund History
 
 ```php
 AppStoreServerApiClient::getRefundHistory(
@@ -172,7 +172,7 @@ Get a list of all refunded in-app purchases in your app for a customer.
 
 https://developer.apple.com/documentation/appstoreserverapi/get_refund_history
 
-### AppStoreServerApiClient::extendSubscriptionRenewalDate
+### Extend a Subscription Renewal Date
 
 ```php
 AppStoreServerApiClient::extendSubscriptionRenewalDate(
@@ -185,7 +185,7 @@ Extend the renewal date of a customer’s active subscription using the original
 
 https://developer.apple.com/documentation/appstoreserverapi/extend_a_subscription_renewal_date
 
-### AppStoreServerApiClient::extendSubscriptionRenewalDatesForAllActiveSubscribers
+### Extend Subscription Renewal Dates for All Active Subscribers
 
 ```php
 AppStoreServerApiClient::extendSubscriptionRenewalDatesForAllActiveSubscribers(
@@ -197,10 +197,10 @@ Uses a subscription’s product identifier to extend the renewal date for all of
 
 https://developer.apple.com/documentation/appstoreserverapi/extend_subscription_renewal_dates_for_all_active_subscribers
 
-### AppStoreServerApiClient::getStatusOfSubscriptionRenewalDateExtensions
+### Get Status of Subscription Renewal Date Extensions
 
 ```php
-AppStoreServerApiClient::extendSubscriptionRenewalDatesForAllActiveSubscribers(
+AppStoreServerApiClient::getStatusOfSubscriptionRenewalDateExtensions(
     string $productId,
     string $requestIdentifier
 ): MassExtendRenewalDateStatusResponse
@@ -210,17 +210,17 @@ Checks whether a renewal date extension request completed, and provides the fina
 
 https://developer.apple.com/documentation/appstoreserverapi/get_status_of_subscription_renewal_date_extensions
 
-### AppStoreServerApiClient::requestATestNotification
+### Request a Test Notification
 
 ```php
-AppStoreServerApiClient::requestATestNotification(): SendTestNotificationResponse
+AppStoreServerApiClient::requestTestNotification(): SendTestNotificationResponse
 ```
 
 Ask App Store Server Notifications to send a test notification to your server.
 
 https://developer.apple.com/documentation/appstoreserverapi/request_a_test_notification
 
-### AppStoreServerApiClient::getTestNotificationStatus
+### Get Test Notification Status
 
 ```php
 AppStoreServerApiClient::getTestNotificationStatus(
@@ -232,7 +232,7 @@ Check the status of the test App Store server notification sent to your server.
 
 https://developer.apple.com/documentation/appstoreserverapi/get_test_notification_status
 
-### AppStoreServerApiClient::getNotificationHistory
+### Get Notification History
 
 ```php
 AppStoreServerApiClient::getNotificationHistory(
@@ -245,7 +245,7 @@ Get a list of notifications that the App Store server attempted to send to your 
 
 https://developer.apple.com/documentation/appstoreserverapi/get_notification_history
 
-### AppStoreServerApiClient::setBundle
+### Set App Store Bundle
 
 ```php
 AppStoreServerApiClient::setBundle(
@@ -255,7 +255,7 @@ AppStoreServerApiClient::setBundle(
 
 Set App Store bundle for authorize your API calls.
 
-### AppStoreServerApiClient::setTokenTtl
+### Set Token TTL
 
 ```php
 AppStoreServerApiClient::setTokenTtl(
@@ -267,7 +267,7 @@ Set new value for JWT TTL (in seconds). Maximum value: 3600.
 
 https://developer.apple.com/documentation/appstoreserverapi/generating_tokens_for_api_requests
 
-### AppStoreServerApiClient::setHttpClientRequestTimeout
+### Set HTTP Client Request Timeout
 
 ```php
 AppStoreServerApiClient::setHttpClientRequestTimeout(
@@ -277,7 +277,7 @@ AppStoreServerApiClient::setHttpClientRequestTimeout(
 
 Set new value for HTTP client request timeout (in seconds).
 
-### AppStoreServerApiClient::callApi
+### Call API
 
 ```php
 AppStoreServerApiClient::callApi(
