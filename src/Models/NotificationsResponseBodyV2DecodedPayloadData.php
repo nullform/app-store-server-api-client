@@ -61,6 +61,16 @@ class NotificationsResponseBodyV2DecodedPayloadData extends AbstractModel
     public $signedTransactionInfo;
 
     /**
+     * The status of an auto-renewable subscription as of the signedDate in the responseBodyV2DecodedPayload.
+     *
+     * This field appears only for notifications sent for auto-renewable subscriptions.
+     *
+     * @var null|int
+     * @link https://developer.apple.com/documentation/appstoreservernotifications/status
+     */
+    public $status = null;
+
+    /**
      * Get decoded subscription renewal information.
      *
      * @return JWSRenewalInfoDecodedPayload|null

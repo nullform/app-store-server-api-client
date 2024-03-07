@@ -47,7 +47,7 @@ class JWSRenewalInfoDecodedPayload extends AbstractModel
      * - 3: The customer didn’t consent to a recent price increase.
      * - 4: The product wasn’t available for purchase at the time of renewal.
      *
-     * @var int
+     * @var int|null
      * @link https://developer.apple.com/documentation/appstoreserverapi/expirationintent
      */
     public $expirationIntent;
@@ -64,7 +64,7 @@ class JWSRenewalInfoDecodedPayload extends AbstractModel
      * The Boolean value that indicates whether the App Store is attempting to automatically renew an expired
      * subscription.
      *
-     * @var bool
+     * @var bool|null
      * @link https://developer.apple.com/documentation/appstoreserverapi/isinbillingretryperiod
      */
     public $isInBillingRetryPeriod;

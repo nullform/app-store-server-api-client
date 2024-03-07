@@ -6,18 +6,32 @@ use Nullform\AppStoreServerApiClient\Exceptions\AppleException;
 use Nullform\AppStoreServerApiClient\Models\JWSRenewalInfoDecodedPayload;
 use Nullform\AppStoreServerApiClient\Models\JWSTransactionDecodedPayload;
 use Nullform\AppStoreServerApiClient\Models\LastTransactionsItem;
+use Nullform\AppStoreServerApiClient\Models\NotificationHistoryResponseItem;
 use Nullform\AppStoreServerApiClient\Models\NotificationsResponseBodyV2DecodedPayload;
 use Nullform\AppStoreServerApiClient\Models\NotificationsResponseBodyV2DecodedPayloadData;
+use Nullform\AppStoreServerApiClient\Models\NotificationsResponseBodyV2DecodedPayloadExternalPurchaseToken;
+use Nullform\AppStoreServerApiClient\Models\NotificationsResponseBodyV2DecodedPayloadSummary;
 use Nullform\AppStoreServerApiClient\Models\Params\GetTransactionHistoryParams;
 use Nullform\AppStoreServerApiClient\Models\Requests\ExtendRenewalDateRequest;
+use Nullform\AppStoreServerApiClient\Models\Requests\MassExtendRenewalDateRequest;
+use Nullform\AppStoreServerApiClient\Models\Requests\NotificationHistoryRequest;
 use Nullform\AppStoreServerApiClient\Models\Responses\HistoryResponse;
+use Nullform\AppStoreServerApiClient\Models\Responses\MassExtendRenewalDateStatusResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\StatusResponse;
 use Nullform\AppStoreServerApiClient\Models\SubscriptionGroupIdentifierItem;
 use Nullform\HttpStatus;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Uid\Uuid;
 
 class AppStoreServerApiClientTest extends AbstractTestCase
 {
+    public function testGetTransactionInfo()
+    {
+        $response = $this->getClient()->getTransactionInfo($this->originalTransactionId);
+
+        $this->testJWSTransactionDecodedPayload($response->getDecodedTransactionInfo());
+    }
+
     public function testGetTransactionHistory()
     {
         $client = $this->getClient();
@@ -155,6 +169,71 @@ class AppStoreServerApiClientTest extends AbstractTestCase
 
     }
 
+    public function testGetNotificationHistory()
+    {
+        $client = $this->getClient();
+
+        $params = new NotificationHistoryRequest();
+        $params->startDate = (int)(new \DateTime())->sub(new \DateInterval("P1M"))->format('Uv');
+        $params->endDate = (int)(new \DateTime())->format('Uv');
+
+        $response = $client->getNotificationHistory($params);
+
+        $this->assertIsBool($response->hasMore);
+        $this->assertIsString($response->paginationToken);
+
+        if ($response->notificationHistory) {
+            foreach ($response->notificationHistory as $item) {
+                $this->assertInstanceOf(NotificationHistoryResponseItem::class, $item);
+                $this->assertNotEmpty($item->signedPayload);
+                $this->assertNotEmpty($item->sendAttempts);
+                $this->testNotificationsResponseBodyV2DecodedPayload($item->getDecodedPayload());
+            }
+        }
+    }
+
+    public function testExtendSubscriptionRenewalDatesForAllActiveSubscribers()
+    {
+        $client = $this->getClient();
+
+        $request = new MassExtendRenewalDateRequest();
+        $request->requestIdentifier = Uuid::v4();
+        $request->extendByDays = 1;
+        $request->extendReasonCode = 0;
+        $request->productId = $this->getCredentials()['product_id'];
+
+        $response = $client->extendSubscriptionRenewalDatesForAllActiveSubscribers($request);
+
+        $this->assertNotEmpty($response->requestIdentifier);
+
+        return $response->requestIdentifier;
+    }
+
+    /**
+     * @param string $requestIdentifier
+     * @depends testExtendSubscriptionRenewalDatesForAllActiveSubscribers
+     * @throws \Exception
+     */
+    public function testGetStatusOfSubscriptionRenewalDateExtensions(string $requestIdentifier)
+    {
+        $client = $this->getClient();
+
+        $response = $client->getStatusOfSubscriptionRenewalDateExtensions(
+            $this->getCredentials()['product_id'],
+            $requestIdentifier
+        );
+
+        $this->assertInstanceOf(MassExtendRenewalDateStatusResponse::class, $response);
+        $this->assertNotEmpty($response->requestIdentifier);
+        $this->assertIsBool($response->complete);
+
+        if ($response->complete) {
+            $this->assertIsInt($response->succeededCount);
+            $this->assertIsInt($response->failedCount);
+            $this->assertIsInt($response->completeDate);
+        }
+    }
+
     public function testCallApi()
     {
         $client = $this->getClient();
@@ -226,9 +305,9 @@ class AppStoreServerApiClientTest extends AbstractTestCase
         $this->assertIsStringNotEmpty($info->autoRenewProductId, 'Bad autoRenewProductId');
         $this->assertIsInt($info->autoRenewStatus, 'Bad autoRenewStatus');
         $this->assertIsStringNotEmpty($info->environment, 'Bad environment');
-        $this->assertIsIntNotEmpty($info->expirationIntent, 'Bad expirationIntent');
+        $this->assertTrue(\is_null($info->expirationIntent) || \is_int($info->expirationIntent), 'Bad expirationIntent');
         $this->assertTrue(\is_null($info->gracePeriodExpiresDate) || \is_int($info->gracePeriodExpiresDate), 'Bad gracePeriodExpiresDate');
-        $this->assertIsBool($info->isInBillingRetryPeriod, 'Bad isInBillingRetryPeriod');
+        $this->assertTrue(\is_null($info->isInBillingRetryPeriod) || \is_bool($info->isInBillingRetryPeriod), 'Bad isInBillingRetryPeriod');
         $this->assertTrue(\is_null($info->offerIdentifier) || \is_string($info->offerIdentifier), 'Bad offerIdentifier');
         $this->assertTrue(\is_null($info->offerType) || \is_int($info->offerType), 'Bad offerType');
         $this->assertIsStringNotEmpty($info->originalTransactionId, 'Bad originalTransactionId');
@@ -243,11 +322,19 @@ class AppStoreServerApiClientTest extends AbstractTestCase
     {
         $this->assertIsStringNotEmpty($payload->notificationType, 'Bad notificationType');
         $this->assertIsStringNotEmpty($payload->notificationUUID, 'Bad notificationUUID');
-        $this->assertIsStringNotEmpty($payload->notificationVersion, 'Bad notificationVersion');
-        $this->assertIsStringNotEmpty($payload->subtype, 'Bad subtype');
-        $this->assertIsArray($payload->data, 'Bad data');
-        $this->assertNotEmpty($payload->data, 'Bad data');
-        $this->testNotificationsResponseBodyV2DecodedPayloadData($payload->data);
+        $this->assertIsStringNotEmpty($payload->version, 'Bad notificationVersion');
+        if (!\is_null($payload->subtype)) {
+            $this->assertIsStringNotEmpty($payload->subtype, 'Bad subtype');
+        }
+        if ($payload->data) {
+            $this->testNotificationsResponseBodyV2DecodedPayloadData($payload->data);
+        }
+        if ($payload->summary) {
+            $this->testNotificationsResponseBodyV2DecodedPayloadSummary($payload->summary);
+        }
+        if ($payload->externalPurchaseToken) {
+            $this->testNotificationsResponseBodyV2DecodedPayloadExternalPurchaseToken($payload->externalPurchaseToken);
+        }
     }
 
     protected function testNotificationsResponseBodyV2DecodedPayloadData(NotificationsResponseBodyV2DecodedPayloadData $data)
@@ -263,5 +350,24 @@ class AppStoreServerApiClientTest extends AbstractTestCase
         if ($data->getDecodedRenewalInfo()) {
             $this->testJWSRenewalInfoDecodedPayload($data->getDecodedRenewalInfo());
         }
+    }
+
+    protected function testNotificationsResponseBodyV2DecodedPayloadSummary(NotificationsResponseBodyV2DecodedPayloadSummary  $summary)
+    {
+        $this->assertIsStringNotEmpty($summary->requestIdentifier, 'Bad requestIdentifier');
+        $this->assertIsStringNotEmpty($summary->environment, 'Bad environment');
+        $this->assertTrue(\is_null($summary->appAppleId) || \is_int($summary->appAppleId), 'Bad appAppleId');
+        $this->assertIsStringNotEmpty($summary->bundleId, 'Bad bundleId');
+        $this->assertIsArray($summary->storefrontCountryCodes, 'Bad storefrontCountryCodes');
+        $this->assertIsInt($summary->failedCount, 'Bad failedCount');
+        $this->assertIsInt($summary->succeededCount, 'Bad succeededCount');
+    }
+
+    protected function testNotificationsResponseBodyV2DecodedPayloadExternalPurchaseToken(NotificationsResponseBodyV2DecodedPayloadExternalPurchaseToken $token)
+    {
+        $this->assertIsStringNotEmpty($token->externalPurchaseId, 'Bad externalPurchaseId');
+        $this->assertIsInt($token->tokenCreationDate, 'Bad tokenCreationDate');
+        $this->assertTrue(\is_null($token->appAppleId) || \is_int($token->appAppleId), 'Bad appAppleId');
+        $this->assertIsStringNotEmpty($token->bundleId, 'Bad bundleId');
     }
 }

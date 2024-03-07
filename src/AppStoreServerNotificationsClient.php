@@ -22,6 +22,7 @@ use Nullform\AppStoreServerApiClient\Models\Responses\NotificationsResponseBodyV
  * ```
  *
  * @link https://developer.apple.com/documentation/appstoreservernotifications
+ * @link https://developer.apple.com/documentation/appstoreservernotifications/app_store_server_notifications_changelog
  */
 class AppStoreServerNotificationsClient
 {

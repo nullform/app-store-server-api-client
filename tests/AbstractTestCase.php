@@ -13,6 +13,11 @@ abstract class AbstractTestCase extends TestCase
 {
     protected $originalTransactionId = '';
 
+    public function setUp(): void
+    {
+        $this->originalTransactionId = $this->getCredentials()['original_transaction_id'];
+    }
+
     protected function getClient(): AppStoreServerApiClient
     {
         $apiKey = new class extends AbstractApiKey {
@@ -24,8 +29,6 @@ abstract class AbstractTestCase extends TestCase
         $bundle = new class extends AbstractBundle {
         };
         $bundle->setBundleId($this->getCredentials()['appstore_bundle_id']);
-
-        $this->originalTransactionId = $this->getCredentials()['original_transaction_id'];
 
         $client = new AppStoreServerApiClient($apiKey, $bundle, Environment::SANDBOX);
 
@@ -46,15 +49,14 @@ abstract class AbstractTestCase extends TestCase
      *     appstore_issuer_id: string,
      *     appstore_key_id: string,
      *     appstore_key: string,
-     *     original_transaction_id: string
+     *     original_transaction_id: string,
+     *     product_id: string
      * }
      * @throws \Exception
      */
     protected function getCredentials(): array
     {
-        if (\is_file(__DIR__ . DIRECTORY_SEPARATOR . 'credentials.local.php')) {
-            $credentials = include __DIR__ . DIRECTORY_SEPARATOR . 'credentials.local.php';
-        } elseif (\is_file(__DIR__ . DIRECTORY_SEPARATOR . 'credentials.php')) {
+        if (\is_file(__DIR__ . DIRECTORY_SEPARATOR . 'credentials.php')) {
             $credentials = include __DIR__ . DIRECTORY_SEPARATOR . 'credentials.php';
         } else {
             throw new \Exception("Can't load credentials file");

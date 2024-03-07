@@ -6,6 +6,7 @@ namespace Nullform\AppStoreServerApiClient;
  * The type that describes the in-app purchase event for which the App Store sends the version 2 notification.
  *
  * @link https://developer.apple.com/documentation/appstoreservernotifications/notificationtype
+ * @link https://developer.apple.com/documentation/appstoreservernotifications/app_store_server_notifications_changelog
  */
 class NotificationV2Types
 {
@@ -65,6 +66,14 @@ class NotificationV2Types
     public const EXPIRED = 'EXPIRED';
 
     /**
+     * A notification type that, along with its subtype UNREPORTED, indicates that Apple created an external
+     * purchase token for your app but didn't receive a report.
+     *
+     * This notification applies only to apps that use the External Purchase API to provide alternative payment options.
+     */
+    public const EXTERNAL_PURCHASE_TOKEN = 'EXTERNAL_PURCHASE_TOKEN';
+
+    /**
      * Indicates that the billing grace period has ended without renewing the subscription, so you can turn off
      * access to service or content. Inform the user that there may be an issue with their billing information.
      * The App Store continues to retry billing for 60 days, or until the user resolves their billing issue or cancels
@@ -103,9 +112,30 @@ class NotificationV2Types
     public const REFUND_DECLINED = 'REFUND_DECLINED';
 
     /**
+     * A notification type that indicates the App Store reversed a previously granted refund due to a dispute that
+     * the customer raised. If your app revoked content or services as a result of the related refund, it needs to
+     * reinstate them.
+     *
+     * This notification type can apply to any in-app purchase type: consumable, non-consumable,
+     * non-renewing subscription, and auto-renewable subscription.
+     * For auto-renewable subscriptions, the renewal date remains unchanged when the App Store reverses a refund.
+     */
+    public const REFUND_REVERSED = 'REFUND_REVERSED';
+
+    /**
      * Indicates that the App Store extended the subscription renewal date that the developer requested.
      */
     public const RENEWAL_EXTENDED = 'RENEWAL_EXTENDED';
+
+    /**
+     * A notification type that, along with its subtype, indicates that the App Store is attempting to extend
+     * the subscription renewal date that you request by calling "Extend Subscription Renewal Dates for All
+     * Active Subscribers".
+     *
+     * If the subtype is SUMMARY, the App Store completed extending the renewal date for all eligible subscribers.
+     * If the subtype is FAILURE, the renewal date extension didn’t succeed for a specific subscription.
+     */
+    public const RENEWAL_EXTENSION = 'RENEWAL_EXTENSION';
 
     /**
      * Indicates that an in-app purchase the user was entitled to through Family Sharing is no longer available
@@ -122,4 +152,11 @@ class NotificationV2Types
      * subscription group.
      */
     public const SUBSCRIBED = 'SUBSCRIBED';
+
+    /**
+     * A notification type that the App Store server sends when you request it by calling the
+     * Request a Test Notification endpoint.
+     * You receive this notification only at your request.
+     */
+    public const TEST = 'TEST';
 }

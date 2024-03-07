@@ -14,13 +14,19 @@ use Nullform\AppStoreServerApiClient\Models\Params\GetRefundHistoryParams;
 use Nullform\AppStoreServerApiClient\Models\Params\GetTransactionHistoryParams;
 use Nullform\AppStoreServerApiClient\Models\Requests\ConsumptionRequest;
 use Nullform\AppStoreServerApiClient\Models\Requests\ExtendRenewalDateRequest;
+use Nullform\AppStoreServerApiClient\Models\Requests\MassExtendRenewalDateRequest;
+use Nullform\AppStoreServerApiClient\Models\Requests\NotificationHistoryRequest;
 use Nullform\AppStoreServerApiClient\Models\Responses\CheckTestNotificationResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\ExtendRenewalDateResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\HistoryResponse;
+use Nullform\AppStoreServerApiClient\Models\Responses\MassExtendRenewalDateResponse;
+use Nullform\AppStoreServerApiClient\Models\Responses\MassExtendRenewalDateStatusResponse;
+use Nullform\AppStoreServerApiClient\Models\Responses\NotificationHistoryResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\OrderLookupResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\RefundHistoryResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\SendTestNotificationResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\StatusResponse;
+use Nullform\AppStoreServerApiClient\Models\Responses\TransactionInfoResponse;
 use Nullform\HttpStatus;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Uid\Uuid;
@@ -215,6 +221,24 @@ class AppStoreServerApiClient
     }
 
     /**
+     * Get information about a single transaction for your app.
+     *
+     * @param string $transactionId The identifier of a transaction that belongs to the customer,
+     *                              and which may be an original transaction identifier (originalTransactionId).
+     * @return TransactionInfoResponse
+     * @throws AppleException
+     * @throws HttpClientException
+     * @link https://developer.apple.com/documentation/appstoreserverapi/get_transaction_info
+     */
+    public function getTransactionInfo(string $transactionId): TransactionInfoResponse
+    {
+        $response = $this->callApi("GET", "inApps/v1/transactions/{$transactionId}");
+        $contents = $response->getBody()->getContents();
+
+        return new TransactionInfoResponse($contents);
+    }
+
+    /**
      * Get the statuses for all of a customer’s subscriptions in your app.
      *
      * @param string $transactionId The identifier of a transaction that belongs to the customer,
@@ -322,6 +346,45 @@ class AppStoreServerApiClient
     }
 
     /**
+     * Uses a subscription’s product identifier to extend the renewal date for all of its eligible active subscribers.
+     *
+     * @param MassExtendRenewalDateRequest $request
+     * @return MassExtendRenewalDateResponse
+     * @throws AppleException
+     * @throws HttpClientException
+     * @link https://developer.apple.com/documentation/appstoreserverapi/extend_subscription_renewal_dates_for_all_active_subscribers
+     */
+    public function extendSubscriptionRenewalDatesForAllActiveSubscribers(
+        MassExtendRenewalDateRequest $request
+    ): MassExtendRenewalDateResponse {
+        $response = $this->callApi("POST", "inApps/v1/subscriptions/extend/mass/", null, $request);
+        $contents = $response->getBody()->getContents();
+
+        return new MassExtendRenewalDateResponse($contents);
+    }
+
+    /**
+     * Checks whether a renewal date extension request completed, and provides the final count of successful or
+     * failed extensions.
+     *
+     * @param string $productId
+     * @param string $requestIdentifier
+     * @return MassExtendRenewalDateStatusResponse
+     * @throws AppleException
+     * @throws HttpClientException
+     * @link https://developer.apple.com/documentation/appstoreserverapi/get_status_of_subscription_renewal_date_extensions
+     */
+    public function getStatusOfSubscriptionRenewalDateExtensions(
+        string $productId,
+        string $requestIdentifier
+    ): MassExtendRenewalDateStatusResponse {
+        $response = $this->callApi("GET", "inApps/v1/subscriptions/extend/mass/{$productId}/{$requestIdentifier}");
+        $contents = $response->getBody()->getContents();
+
+        return new MassExtendRenewalDateStatusResponse($contents);
+    }
+
+    /**
      * Ask App Store Server Notifications to send a test notification to your server.
      *
      * @return SendTestNotificationResponse
@@ -352,6 +415,33 @@ class AppStoreServerApiClient
         $contents = $response->getBody()->getContents();
 
         return new CheckTestNotificationResponse($contents);
+    }
+
+    /**
+     * Get a list of notifications that the App Store server attempted to send to your server.
+     *
+     * @param NotificationHistoryRequest $params
+     * @param string|null $paginationToken
+     * @return NotificationHistoryResponse
+     * @throws AppleException
+     * @throws HttpClientException
+     * @link https://developer.apple.com/documentation/appstoreserverapi/get_notification_history
+     */
+    public function getNotificationHistory(
+        NotificationHistoryRequest $params,
+        ?string $paginationToken = null
+    ): NotificationHistoryResponse {
+        $queryParams = null;
+        if ($paginationToken) {
+            $queryParams = new class extends AbstractModel {
+                public $paginationToken = '';
+            };
+            $queryParams->paginationToken = $paginationToken;
+        }
+        $response = $this->callApi("POST", "inApps/v1/notifications/history", $queryParams, $params);
+        $contents = $response->getBody()->getContents();
+
+        return new NotificationHistoryResponse($contents);
     }
 
     /**
@@ -419,6 +509,7 @@ class AppStoreServerApiClient
      *
      * @param array $options
      * @return HttpClient
+     * @see RequestOptions
      */
     protected function getHttpClient(array $options = []): HttpClient
     {

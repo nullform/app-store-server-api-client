@@ -111,6 +111,18 @@ AppStoreServerApiClient::getAllTransactionHistory(
 
 Recursively get FULL transaction history.
 
+### AppStoreServerApiClient::getTransactionInfo
+
+```php
+AppStoreServerApiClient::getTransactionInfo(
+    string $transactionId
+): TransactionInfoResponse
+```
+
+Get information about a single transaction for your app.
+
+https://developer.apple.com/documentation/appstoreserverapi/get_transaction_info
+
 ### AppStoreServerApiClient::getAllSubscriptionStatuses
 
 ```php
@@ -172,6 +184,66 @@ AppStoreServerApiClient::extendSubscriptionRenewalDate(
 Extend the renewal date of a customer’s active subscription using the original transaction identifier.
 
 https://developer.apple.com/documentation/appstoreserverapi/extend_a_subscription_renewal_date
+
+### AppStoreServerApiClient::extendSubscriptionRenewalDatesForAllActiveSubscribers
+
+```php
+AppStoreServerApiClient::extendSubscriptionRenewalDatesForAllActiveSubscribers(
+    MassExtendRenewalDateRequest $request
+): MassExtendRenewalDateResponse
+```
+
+Uses a subscription’s product identifier to extend the renewal date for all of its eligible active subscribers.
+
+https://developer.apple.com/documentation/appstoreserverapi/extend_subscription_renewal_dates_for_all_active_subscribers
+
+### AppStoreServerApiClient::getStatusOfSubscriptionRenewalDateExtensions
+
+```php
+AppStoreServerApiClient::extendSubscriptionRenewalDatesForAllActiveSubscribers(
+    string $productId,
+    string $requestIdentifier
+): MassExtendRenewalDateStatusResponse
+```
+
+Checks whether a renewal date extension request completed, and provides the final count of successful or failed extensions.
+
+https://developer.apple.com/documentation/appstoreserverapi/get_status_of_subscription_renewal_date_extensions
+
+### AppStoreServerApiClient::requestATestNotification
+
+```php
+AppStoreServerApiClient::requestATestNotification(): SendTestNotificationResponse
+```
+
+Ask App Store Server Notifications to send a test notification to your server.
+
+https://developer.apple.com/documentation/appstoreserverapi/request_a_test_notification
+
+### AppStoreServerApiClient::getTestNotificationStatus
+
+```php
+AppStoreServerApiClient::getTestNotificationStatus(
+    string $testNotificationToken
+): CheckTestNotificationResponse
+```
+
+Check the status of the test App Store server notification sent to your server.
+
+https://developer.apple.com/documentation/appstoreserverapi/get_test_notification_status
+
+### AppStoreServerApiClient::getNotificationHistory
+
+```php
+AppStoreServerApiClient::getNotificationHistory(
+    NotificationHistoryRequest $params,
+    ?string $paginationToken = null
+): CheckTestNotificationResponse
+```
+
+Get a list of notifications that the App Store server attempted to send to your server.
+
+https://developer.apple.com/documentation/appstoreserverapi/get_notification_history
 
 ### AppStoreServerApiClient::setBundle
 
