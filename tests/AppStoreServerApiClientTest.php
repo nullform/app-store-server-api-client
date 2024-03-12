@@ -2,7 +2,12 @@
 
 namespace Nullform\AppStoreServerApiClient\Tests;
 
+use Nullform\AppStoreServerApiClient\ApiKey;
+use Nullform\AppStoreServerApiClient\AppStoreServerApiClient;
+use Nullform\AppStoreServerApiClient\Bundle;
+use Nullform\AppStoreServerApiClient\Environment;
 use Nullform\AppStoreServerApiClient\Exceptions\AppleException;
+use Nullform\AppStoreServerApiClient\Exceptions\HttpClientException;
 use Nullform\AppStoreServerApiClient\Models\JWSRenewalInfoDecodedPayload;
 use Nullform\AppStoreServerApiClient\Models\JWSTransactionDecodedPayload;
 use Nullform\AppStoreServerApiClient\Models\LastTransactionsItem;
@@ -18,6 +23,7 @@ use Nullform\AppStoreServerApiClient\Models\Requests\NotificationHistoryRequest;
 use Nullform\AppStoreServerApiClient\Models\Responses\HistoryResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\MassExtendRenewalDateStatusResponse;
 use Nullform\AppStoreServerApiClient\Models\Responses\StatusResponse;
+use Nullform\AppStoreServerApiClient\Models\Responses\TransactionInfoResponse;
 use Nullform\AppStoreServerApiClient\Models\SubscriptionGroupIdentifierItem;
 use Nullform\HttpStatus;
 use Psr\Http\Message\ResponseInterface;
@@ -25,6 +31,24 @@ use Symfony\Component\Uid\Uuid;
 
 class AppStoreServerApiClientTest extends AbstractTestCase
 {
+    public function testConstructors()
+    {
+        $apiKey = new ApiKey(
+            $this->getCredentials()['appstore_key'],
+            $this->getCredentials()['appstore_key_id'],
+            $this->getCredentials()['appstore_issuer_id']
+        );
+        $bundle = new Bundle($this->getCredentials()['appstore_bundle_id']);
+
+        $client = new AppStoreServerApiClient($apiKey, $bundle, Environment::SANDBOX);
+
+        $client->setHttpClientRequestTimeout(30);
+
+        $response = $client->getTransactionInfo($this->originalTransactionId);
+
+        $this->assertInstanceOf(TransactionInfoResponse::class, $response);
+    }
+
     public function testGetTransactionInfo()
     {
         $response = $this->getClient()->getTransactionInfo($this->originalTransactionId);
@@ -258,14 +282,14 @@ class AppStoreServerApiClientTest extends AbstractTestCase
 
     public function testCallApiBadPath()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(HttpClientException::class);
 
         $this->getClient()->callApi('GET', '/google');
     }
 
     public function testCallApiBadMethod()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(HttpClientException::class);
 
         $this->getClient()->callApi('test', 'inApps/v1/notifications/test');
     }

@@ -19,22 +19,32 @@ composer require nullform/app-store-server-api-client
 Create an API Key instance:
 
 ```php
+// As instance of anonymous class...
 $apiKey = new class extends AbstractApiKey {};
 $apiKey->setPrivateKey(\file_get_contents($privateKeyFile));
 $apiKey->setPrivateKeyId('Your private key id');
 $apiKey->setIssuerId('Your issuer id');
 $apiKey->setName('Key name (optional)');
+
+// ... or as instance of ApiKey
+$apiKey = new ApiKey(
+    \file_get_contents($privateKeyFile),
+    'Your private key id',
+    'Your issuer id',
+    'Key name (optional)'
+);
 ```
 
 Create a Bundle instance(s):
 
 ```php
+// As instance of anonymous class...
 $bundle = new class extends AbstractBundle {};
 $bundle->setBundleId('Your bundle id');
 $bundle->setName('Bundle name (optional)');
 
-$bundle2 = new class extends AbstractBundle {};
-$bundle2->setBundleId('Your bundle #2 id');
+// ... or as instance of Bundle
+$bundle2 = new Bundle('Your bundle #2 id');
 ```
 
 Create an API client instance:
