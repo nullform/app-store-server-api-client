@@ -73,7 +73,6 @@ use Symfony\Component\Uid\Uuid;
  * }
  * ```
  *
- *
  * @link https://developer.apple.com/documentation/appstoreserverapi
  */
 class AppStoreServerApiClient
@@ -119,6 +118,7 @@ class AppStoreServerApiClient
     {
         $this->environment = new Environment($environment);
         $this->apiKey = $apiKey;
+
         $this->setBundle($bundle);
     }
 
@@ -474,6 +474,7 @@ class AppStoreServerApiClient
         $method = trim($method);
         $path = trim($path);
         $path = (new Uri($path))->getPath();
+        
         if (!\in_array(\strtolower($method), ['get', 'head', 'post', 'put', 'delete', 'patch'])) {
             throw new HttpClientException('Bad method');
         }

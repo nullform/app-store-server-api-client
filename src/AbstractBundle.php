@@ -33,6 +33,7 @@ abstract class AbstractBundle implements BundleInterface
     public function setBundleId(string $bundleId): BundleInterface
     {
         $this->bundleId = $bundleId;
+
         return $this;
     }
 
@@ -50,6 +51,7 @@ abstract class AbstractBundle implements BundleInterface
     public function setName(string $name): BundleInterface
     {
         $this->name = $name;
+
         return $this;
     }
 }

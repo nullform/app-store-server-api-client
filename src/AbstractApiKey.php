@@ -43,6 +43,7 @@ abstract class AbstractApiKey implements ApiKeyInterface
     public function setPrivateKey(string $privateKey): ApiKeyInterface
     {
         $this->privateKey = $privateKey;
+
         return $this;
     }
 
@@ -60,6 +61,7 @@ abstract class AbstractApiKey implements ApiKeyInterface
     public function setPrivateKeyId(string $privateKeyId): ApiKeyInterface
     {
         $this->privateKeyId = $privateKeyId;
+
         return $this;
     }
 
@@ -77,6 +79,7 @@ abstract class AbstractApiKey implements ApiKeyInterface
     public function setIssuerId(string $issuerId): ApiKeyInterface
     {
         $this->issuerId = $issuerId;
+
         return $this;
     }
 
@@ -94,6 +97,7 @@ abstract class AbstractApiKey implements ApiKeyInterface
     public function setName(string $name): ApiKeyInterface
     {
         $this->name = $name;
+
         return $this;
     }
 }
