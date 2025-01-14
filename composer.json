@@ -7,7 +7,7 @@
     "require": {
         "php": "^7.2||^8.0",
         "ext-json": "*",
-        "symfony/uid": "^5.4",
+        "symfony/uid": "^5.4||^7.0",
         "guzzlehttp/guzzle": "^7.5",
         "firebase/php-jwt": "^6.0",
         "nullform/http-status": "^1.1"
