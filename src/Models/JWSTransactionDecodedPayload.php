@@ -20,6 +20,14 @@ class JWSTransactionDecodedPayload extends AbstractModel
     public $appAccountToken;
 
     /**
+     * The unique identifier of the app download transaction.
+     *
+     * @var string
+     * @link https://developer.apple.com/documentation/appstoreserverapi/apptransactionid
+     */
+    public $appTransactionId;
+
+    /**
      * The bundle identifier of an app.
      *
      * @var string
@@ -90,6 +98,22 @@ class JWSTransactionDecodedPayload extends AbstractModel
      * @link https://developer.apple.com/documentation/appstoreserverapi/offeridentifier
      */
     public $offerIdentifier;
+
+    /**
+     * The duration of the offer.
+     *
+     * This field is in ISO 8601 duration format.
+     * The following table shows examples of offer period values.
+     *
+     * Single period length - Period count - Offer period value
+     * 1 month - 1 - P1M
+     * 1 month - 2 - P2M
+     * 3 days - 1 - P3D
+     *
+     * @var string|null
+     * @link https://developer.apple.com/documentation/appstoreserverapi/offerperiod
+     */
+    public $offerPeriod;
 
     /**
      * The type of promotional offer.

@@ -12,6 +12,21 @@ use Nullform\AppStoreServerApiClient\AbstractModel;
 class JWSRenewalInfoDecodedPayload extends AbstractModel
 {
     /**
+     * The UUID an app optionally generates to map a customer’s in-app purchase with its resulting App Store transaction.
+     *
+     * @var string|null
+     * @link https://developer.apple.com/documentation/appstoreserverapi/appaccounttoken
+     */
+    public $appAccountToken;
+
+    /**
+     * The unique identifier of the app download transaction.
+     *
+     * @var string
+     * @link https://developer.apple.com/documentation/appstoreserverapi/apptransactionid
+     */
+    public $appTransactionId;
+    /**
      * The identifier of the product that renews at the next billing period.
      *
      * @var string
@@ -30,6 +45,25 @@ class JWSRenewalInfoDecodedPayload extends AbstractModel
      * @link https://developer.apple.com/documentation/appstoreserverapi/autorenewstatus
      */
     public $autoRenewStatus;
+
+    /**
+     * The three-letter ISO 4217 currency code associated with the price parameter.
+     *
+     * This value is present only if price is present.
+     *
+     * @var string|null
+     * @link https://developer.apple.com/documentation/appstoreserverapi/currency
+     */
+    public $currency = null;
+
+    /**
+     * An array of win-back offer identifiers that a customer is eligible to redeem, which
+     * sorts the identifiers with the best offers first.
+     *
+     * @var array|null
+     * @link https://developer.apple.com/documentation/appstoreserverapi/eligiblewinbackofferids
+     */
+    public $eligibleWinBackOfferIds;
 
     /**
      * The server environment, either sandbox or production.
@@ -70,12 +104,36 @@ class JWSRenewalInfoDecodedPayload extends AbstractModel
     public $isInBillingRetryPeriod;
 
     /**
+     * The payment mode for a discount offer on an In-App Purchase.
+     *
+     * @var string|null
+     * @link https://developer.apple.com/documentation/appstoreserverapi/offerdiscounttype
+     */
+    public $offerDiscountType;
+
+    /**
      * The promo code or the promotional offer identifier.
      *
      * @var string|null
      * @link https://developer.apple.com/documentation/appstoreserverapi/offeridentifier
      */
     public $offerIdentifier;
+
+    /**
+     * The duration of the offer.
+     *
+     * This field is in ISO 8601 duration format.
+     * The following table shows examples of offer period values.
+     *
+     * Single period length - Period count - Offer period value
+     * 1 month - 1 - P1M
+     * 1 month - 2 - P2M
+     * 3 days - 1 - P3D
+     *
+     * @var string|null
+     * @link https://developer.apple.com/documentation/appstoreserverapi/offerperiod
+     */
+    public $offerPeriod;
 
     /**
      * The type of promotional offer.
@@ -132,6 +190,14 @@ class JWSRenewalInfoDecodedPayload extends AbstractModel
      * @link https://developer.apple.com/documentation/appstoreserverapi/renewaldate
      */
     public $renewalDate;
+
+    /**
+     * The renewal price, in milliunits, of the auto-renewable subscription that renews at the next billing period.
+     *
+     * @var int|null
+     * @link https://developer.apple.com/documentation/appstoreserverapi/renewalprice
+     */
+    public $renewalPrice = null;
 
     /**
      * The UNIX time, in milliseconds, that the App Store signed the JSON Web Signature data.
