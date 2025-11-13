@@ -297,6 +297,7 @@ class AppStoreServerApiClientTest extends AbstractTestCase
     protected function testJWSTransactionDecodedPayload(JWSTransactionDecodedPayload $transaction)
     {
         $this->assertTrue(\is_string($transaction->appAccountToken) || \is_null($transaction->appAccountToken), 'Bad appAccountToken');
+        $this->assertIsStringNotEmpty($transaction->appTransactionId, 'Bad appTransactionId');
         $this->assertIsStringNotEmpty($transaction->bundleId, 'Bad bundleId');
         $this->assertTrue(\is_string($transaction->currency) || \is_null($transaction->currency), 'Bad currency');
         $this->assertIsStringNotEmpty($transaction->environment, 'Bad environment');
@@ -305,6 +306,7 @@ class AppStoreServerApiClientTest extends AbstractTestCase
         $this->assertTrue(\is_null($transaction->isUpgraded) || \is_bool($transaction->isUpgraded), 'Bad isUpgraded');
         $this->assertTrue(\is_null($transaction->offerDiscountType) || \is_string($transaction->offerDiscountType), 'Bad offerDiscountType');
         $this->assertTrue(\is_null($transaction->offerIdentifier) || \is_string($transaction->offerIdentifier), 'Bad offerIdentifier');
+        $this->assertTrue(\is_null($transaction->offerPeriod) || \is_string($transaction->offerPeriod), 'Bad offerPeriod');
         $this->assertTrue(\is_null($transaction->offerType) || \is_int($transaction->offerType), 'Bad offerType');
         $this->assertIsIntNotEmpty($transaction->originalPurchaseDate, 'Bad originalPurchaseDate');
         $this->assertIsStringNotEmpty($transaction->originalTransactionId, 'Bad originalTransactionId');
@@ -326,19 +328,26 @@ class AppStoreServerApiClientTest extends AbstractTestCase
 
     protected function testJWSRenewalInfoDecodedPayload(JWSRenewalInfoDecodedPayload $info)
     {
+        $this->assertTrue(\is_string($info->appAccountToken) || \is_null($info->appAccountToken), 'Bad appAccountToken');
+        $this->assertIsStringNotEmpty($info->appTransactionId, 'Bad appTransactionId');
         $this->assertIsStringNotEmpty($info->autoRenewProductId, 'Bad autoRenewProductId');
         $this->assertIsInt($info->autoRenewStatus, 'Bad autoRenewStatus');
+        $this->assertTrue(\is_string($info->currency) || \is_null($info->currency), 'Bad currency');
+        $this->assertTrue(\is_array($info->eligibleWinBackOfferIds) || \is_null($info->eligibleWinBackOfferIds), 'Bad eligibleWinBackOfferIds');
         $this->assertIsStringNotEmpty($info->environment, 'Bad environment');
         $this->assertTrue(\is_null($info->expirationIntent) || \is_int($info->expirationIntent), 'Bad expirationIntent');
         $this->assertTrue(\is_null($info->gracePeriodExpiresDate) || \is_int($info->gracePeriodExpiresDate), 'Bad gracePeriodExpiresDate');
         $this->assertTrue(\is_null($info->isInBillingRetryPeriod) || \is_bool($info->isInBillingRetryPeriod), 'Bad isInBillingRetryPeriod');
+        $this->assertTrue(\is_null($info->offerDiscountType) || \is_string($info->offerDiscountType), 'Bad offerDiscountType');
         $this->assertTrue(\is_null($info->offerIdentifier) || \is_string($info->offerIdentifier), 'Bad offerIdentifier');
+        $this->assertTrue(\is_null($info->offerPeriod) || \is_string($info->offerPeriod), 'Bad offerPeriod');
         $this->assertTrue(\is_null($info->offerType) || \is_int($info->offerType), 'Bad offerType');
         $this->assertIsStringNotEmpty($info->originalTransactionId, 'Bad originalTransactionId');
         $this->assertTrue(\is_null($info->priceIncreaseStatus) || \is_int($info->priceIncreaseStatus), 'Bad priceIncreaseStatus');
         $this->assertIsStringNotEmpty($info->productId, 'Bad productId');
         $this->assertIsIntNotEmpty($info->recentSubscriptionStartDate, 'Bad recentSubscriptionStartDate');
         $this->assertIsIntNotEmpty($info->renewalDate, 'Bad renewalDate');
+        $this->assertTrue(\is_null($info->renewalPrice) || \is_int($info->renewalPrice), 'Bad renewalPrice');
         $this->assertIsIntNotEmpty($info->signedDate, 'Bad signedDate');
     }
 
