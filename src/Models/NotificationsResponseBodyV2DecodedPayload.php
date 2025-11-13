@@ -114,6 +114,9 @@ class NotificationsResponseBodyV2DecodedPayload extends AbstractModel
         if (!empty($data['data'])) {
             $this->data = new NotificationsResponseBodyV2DecodedPayloadData($data['data']);
         }
+        if (!empty($data['summary'])) {
+            $this->summary = new NotificationsResponseBodyV2DecodedPayloadSummary($data['summary']);
+        }
 
         return $this;
     }
