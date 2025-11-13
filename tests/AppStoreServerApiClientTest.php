@@ -198,7 +198,7 @@ class AppStoreServerApiClientTest extends AbstractTestCase
         $client = $this->getClient();
 
         $params = new NotificationHistoryRequest();
-        $params->startDate = (int)(new \DateTime())->sub(new \DateInterval("P1M"))->format('Uv');
+        $params->startDate = (int)(new \DateTime())->sub(new \DateInterval("P20D"))->format('Uv');
         $params->endDate = (int)(new \DateTime())->format('Uv');
 
         $response = $client->getNotificationHistory($params);
