@@ -26,6 +26,7 @@ class JWSRenewalInfoDecodedPayload extends AbstractModel
      * @link https://developer.apple.com/documentation/appstoreserverapi/apptransactionid
      */
     public $appTransactionId;
+
     /**
      * The identifier of the product that renews at the next billing period.
      *
@@ -126,9 +127,10 @@ class JWSRenewalInfoDecodedPayload extends AbstractModel
      * The following table shows examples of offer period values.
      *
      * Single period length - Period count - Offer period value
-     * 1 month - 1 - P1M
-     * 1 month - 2 - P2M
-     * 3 days - 1 - P3D
+     *
+     * - 1 month - 1 - P1M
+     * - 1 month - 2 - P2M
+     * - 3 days - 1 - P3D
      *
      * @var string|null
      * @link https://developer.apple.com/documentation/appstoreserverapi/offerperiod
