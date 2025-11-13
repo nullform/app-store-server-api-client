@@ -31,7 +31,7 @@ class NotificationsResponseBodyV2DecodedPayloadData extends AbstractModel
     /**
      * The version of the build that identifies an iteration of the bundle.
      *
-     * @var string
+     * @var string|null
      * @link https://developer.apple.com/documentation/appstoreservernotifications/bundleversion
      */
     public $bundleVersion;

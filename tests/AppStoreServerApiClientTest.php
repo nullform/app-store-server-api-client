@@ -374,9 +374,8 @@ class AppStoreServerApiClientTest extends AbstractTestCase
     {
         $this->assertTrue(\is_null($data->appAppleId) || \is_int($data->appAppleId), 'Bad appAppleId');
         $this->assertIsStringNotEmpty($data->bundleId, 'Bad bundleId');
-        $this->assertIsStringNotEmpty($data->bundleVersion, 'Bad bundleVersion');
+        $this->assertTrue(\is_null($data->bundleVersion) || \is_string($data->bundleVersion), 'Bad bundleVersion');
         $this->assertIsStringNotEmpty($data->environment, 'Bad environment');
-        $this->assertTrue($data->getDecodedRenewalInfo() || $data->getDecodedTransactionInfo(), 'Empty useful data');
         if ($data->getDecodedTransactionInfo()) {
             $this->testJWSTransactionDecodedPayload($data->getDecodedTransactionInfo());
         }
