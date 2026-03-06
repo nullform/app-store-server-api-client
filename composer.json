@@ -9,7 +9,7 @@
         "ext-json": "*",
         "symfony/uid": "^5.4||^7.0",
         "guzzlehttp/guzzle": "^7.5",
-        "firebase/php-jwt": "^6.0",
+        "firebase/php-jwt": "^7.0",
         "nullform/http-status": "^1.1"
     },
     "require-dev": {
