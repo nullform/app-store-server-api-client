@@ -6,7 +6,7 @@ Unoffical PHP client for [App Store Server API](https://developer.apple.com/docu
 
 ### Requirements
 
-- PHP >= 7.2
+- PHP >= 8.0
 
 ### Composer
 
