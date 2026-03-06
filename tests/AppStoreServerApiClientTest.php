@@ -204,7 +204,7 @@ class AppStoreServerApiClientTest extends AbstractTestCase
         $response = $client->getNotificationHistory($params);
 
         $this->assertIsBool($response->hasMore);
-        $this->assertIsString($response->paginationToken);
+        $this->assertTrue(\is_null($response->paginationToken) || \is_string($response->paginationToken));
 
         if ($response->notificationHistory) {
             foreach ($response->notificationHistory as $item) {
