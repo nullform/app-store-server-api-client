@@ -33,10 +33,10 @@ class NotificationHistoryResponse extends AbstractModel
     /**
      * A pagination token that you provide on a subsequent request to get the next page of responses.
      *
-     * @var string
+     * @var string|null
      * @link https://developer.apple.com/documentation/appstoreserverapi/paginationtoken?changes=latest_major
      */
-    public $paginationToken;
+    public $paginationToken = null;
 
     /**
      * @inheritDoc
